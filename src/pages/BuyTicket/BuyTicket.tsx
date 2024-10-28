@@ -67,6 +67,7 @@ const BuyTicket = () => {
           selectedTheater={selectedTheater}
           selectedSession={selectedSession}
           selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
         />
       )}
       {currentStep === 1 && <Step2 moveToNext={moveToNext} />}

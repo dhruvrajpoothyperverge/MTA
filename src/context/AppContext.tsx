@@ -1,16 +1,16 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext } from "react";
 
 interface AppContextType {}
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppContextProvider({ children }: { children: ReactNode }) {
-    const [newMovies, setNewMovies] = useState([]);
-    const [highlights, setHighlights] = useState([]);
-    const [selectedMovieTheater, setSelectedMovieTheater] = useState<string>("");
-    const [selectedSession, setSession] = useState<string>("");
-    const [buffetItems, setBuffetItems] = useState([]);
-    const [selectedBuffetItems, setSelectedBuffetItems]= useState([]);
+    // const [newMovies, setNewMovies] = useState([]);
+    // const [highlights, setHighlights] = useState([]);
+    // const [selectedMovieTheater, setSelectedMovieTheater] = useState<string>("");
+    // const [selectedSession, setSession] = useState<string>("");
+    // const [buffetItems, setBuffetItems] = useState([]);
+    // const [selectedBuffetItems, setSelectedBuffetItems]= useState([]);
 
   return <AppContext.Provider value={{}}>{children}</AppContext.Provider>;
 }
