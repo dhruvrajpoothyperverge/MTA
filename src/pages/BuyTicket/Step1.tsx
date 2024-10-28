@@ -13,7 +13,7 @@ const Step1 = (props: any) => {
     <div>
       <div className="flex flex-col gap-4 px-5 pb-28">
         <MovieInfoSummary
-          image={"/src/assets/spiderman.png"}
+          image={"/assets/spiderman.png"}
           title={"Kung Fu Panda 4"}
           productionName={"DreamWorks Animation"}
         />

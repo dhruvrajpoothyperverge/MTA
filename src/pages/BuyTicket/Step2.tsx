@@ -45,7 +45,7 @@ const Step2 = (props: any) => {
     seatNumbers: ["C3", "C4"],
     buffetProducts: [],
     buffetTotal: 0,
-    theater: "Cinaema Village",
+    theater: "Cinema Village",
     amount: 40,
   };
 

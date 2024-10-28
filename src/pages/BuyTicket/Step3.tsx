@@ -6,19 +6,19 @@ const Step3 = (props: any) => {
   const paymentOptions = [
     {
       title: "Apple Pay",
-      image: "/src/assets/applepay.png",
+      image: "/assets/applepay.png",
     },
     {
       title: "Master Card",
-      image: "/src/assets/mastercard.png",
+      image: "/assets/mastercard.png",
     },
     {
       title: "PayPal",
-      image: "/src/assets/paypal.png",
+      image: "/assets/paypal.png",
     },
     {
       title: "Google Pay",
-      image: "/src/assets/googlepay.png",
+      image: "/assets/googlepay.png",
     },
   ];
 

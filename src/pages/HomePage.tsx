@@ -18,39 +18,39 @@ const HomePage = () => {
   const carouselData = [
     {
       label: "Spiderman",
-      image: "/src/assets/spiderman.png",
+      image: "/assets/spiderman.png",
       link: "/moviedetails/1",
     },
     {
       label: "Spiderman",
-      image: "/src/assets/spiderman.png",
+      image: "/assets/spiderman.png",
       link: "/moviedetails/2",
     },
     {
       label: "Spiderman",
-      image: "/src/assets/spiderman.png",
+      image: "/assets/spiderman.png",
       link: "/moviedetails/3",
     },
   ];
 
   const newMovies = [
     {
-      image: "/src/assets/kungfupanda.png",
+      image: "/assets/kungfupanda.png",
       link: "/moviedetails/1",
     },
     {
-      image: "/src/assets/kungfupanda.png",
+      image: "/assets/kungfupanda.png",
       link: "/moviedetails/1",
     },
     {
-      image: "/src/assets/kungfupanda.png",
+      image: "/assets/kungfupanda.png",
       link: "/moviedetails/1",
     },
   ];
 
   return (
     <HomeContainer
-      profilePic="/src/assets/kungfupanda.png"
+      profilePic="/assets/kungfupanda.png"
       showBadge={true}
       fallback="https://example.com/default.jpg"
       navbarData={navItems}

@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const MovieDetailsPage = () => {
   const movieDetails = {
-    image: "/src/assets/kungfupanda.png",
+    image: "/assets/kungfupanda.png",
     title: "Kung Fu Panda 4",
     productionHouse: "Dreamworks Animation",
     rating: 8.5,
@@ -33,15 +33,15 @@ const MovieDetailsPage = () => {
 
   const imagesInTheMovie = [
     {
-      image: "/src/assets/spiderman.png",
+      image: "/assets/spiderman.png",
       link: "/moviedetails/1",
     },
     {
-      image: "/src/assets/spiderman.png",
+      image: "/assets/spiderman.png",
       link: "/moviedetails/1",
     },
     {
-      image: "/src/assets/spiderman.png",
+      image: "/assets/spiderman.png",
       link: "/moviedetails/1",
     },
   ];
@@ -52,7 +52,7 @@ const MovieDetailsPage = () => {
         onBackClick={handleBackClick}
         onHeartClick={handleHeartClick}
         videoLink="https://example.com/movie-video.mp4"
-        videoThumbnail="/src/assets/spiderman.png"
+        videoThumbnail="/assets/spiderman.png"
         movieInfo={movieDetails}
       />
 

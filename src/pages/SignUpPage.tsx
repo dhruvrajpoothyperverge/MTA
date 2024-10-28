@@ -44,7 +44,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <BackgroundContainer bgurl="/src/assets/bg.png">
+    <BackgroundContainer bgurl="/assets/bg.png">
       <SignUpContainer
         inputArray={inputArray}
         verficationArray={verificationArray}

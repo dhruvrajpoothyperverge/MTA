@@ -30,7 +30,7 @@ const SignInPage = () => {
   };
 
   return (
-    <BackgroundContainer bgurl="/src/assets/bg.png">
+    <BackgroundContainer bgurl="/assets/bg.png">
       <SignInContainer
         inputArray={inputArray}
         onSubmit={onSubmit}

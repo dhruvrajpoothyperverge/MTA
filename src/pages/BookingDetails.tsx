@@ -18,7 +18,7 @@ const BookingDetails = () => {
 
   return (
     <div className="flex flex-col justify-center min-h-screen gap-10 px-5">
-      <QRcodeContainer value="https://localhost:5173/" />
+      <QRcodeContainer value="Booked" />
       <BookingSummary data={bookingData} />
       <Button
         text="Go to Home"

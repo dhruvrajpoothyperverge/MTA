@@ -8,25 +8,25 @@ import { useNavigate } from "react-router-dom";
 const BuyFood = () => {
   const foodItems = [
     {
-      image: "/src/assets/fooditem.png",
+      image: "/assets/fooditem.png",
       label: "Burger",
       items: ["Beef", "Chicken", "Veggie"],
       price: 5.99,
     },
     {
-      image: "/src/assets/fooditem.png",
+      image: "/assets/fooditem.png",
       label: "Pizza",
       items: ["Pepperoni", "Margherita"],
       price: 8.99,
     },
     {
-      image: "/src/assets/fooditem.png",
+      image: "/assets/fooditem.png",
       label: "Pizza",
       items: ["Pepperoni", "Margherita"],
       price: 8.99,
     },
     {
-      image: "/src/assets/fooditem.png",
+      image: "/assets/fooditem.png",
       label: "Pizza",
       items: ["Pepperoni", "Margherita"],
       price: 8.99,
