@@ -1,0 +1,23 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.swiper-pagination-bullet {
+  width: 7px !important;
+  height: 7px !important;
+  margin: 0 2px !important;
+  background: rgba(217, 217, 217, 1) !important;
+  border-radius: 50% !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.swiper-pagination-bullet-active {
+  width: 16px !important;
+  height: 7px !important;
+  margin: 0 2px !important;
+  border-radius: 10px !important;
+  background: rgba(108, 71, 219, 1) !important;
+  transition: all 0.2s ease-in-out !important;
+}
