@@ -11,7 +11,7 @@ const SignInSignUpPage = () => {
     navigate("/signup");
   };
   return (
-    <BackgroundContainer bgurl="../assets/bg.png">
+    <BackgroundContainer bgurl="/assets/bg.png">
       <div className="mb-6">
         <SignInSignUp onSignIn={onSignIn} onSignUp={onSignUp} />
       </div>

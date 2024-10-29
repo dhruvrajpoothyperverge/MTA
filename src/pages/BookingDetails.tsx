@@ -1,17 +1,34 @@
 import { QRcodeContainer, BookingSummary, Button } from "mta-components";
 import { useNavigate } from "react-router-dom";
+import { useBookingContext } from "../context/BookingContext";
+import { getSeatLabel } from "../utils/utility";
+import { useFoodContext } from "../context/FoodContext";
+import { useMovieContext } from "../context/MovieContext";
 
 const BookingDetails = () => {
+  // current selected movie details instead of ticket booked details
+
+  const { currentMovie } = useMovieContext();
+  const { foodTotalAmount, foodItems } = useFoodContext();
+  const {
+    selectedSeats,
+    adults,
+    childs,
+    ticketTotalAmount,
+    selectedMovieTheater,
+    selectedSession,
+  } = useBookingContext();
+
   const bookingData = {
-    movie: "Kung Fu Panda 4",
-    adult: 2,
-    child: 0,
-    session: "20:30 pm - 22:00 pm",
-    seatNumbers: ["C3", "C4"],
-    buffetProducts: [],
-    buffetTotal: 0,
-    theater: "Cinaema Village",
-    amount: 40,
+    movie: currentMovie?.title || "",
+    adult: adults,
+    child: childs,
+    session: selectedSession,
+    seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
+    theater: selectedMovieTheater,
+    buffetProducts: foodItems,
+    buffetTotal: foodTotalAmount,
+    ticketTotal: ticketTotalAmount,
   };
 
   const navigate = useNavigate();

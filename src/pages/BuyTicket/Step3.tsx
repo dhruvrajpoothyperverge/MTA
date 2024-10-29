@@ -1,7 +1,12 @@
 import { PaymentOptionContainer, TotalAmount } from "mta-components";
+import { useFoodContext } from "../../context/FoodContext";
+import { useBookingContext } from "../../context/BookingContext";
 
 const Step3 = (props: any) => {
   const { moveToNext } = props;
+
+  const { foodTotalAmount } = useFoodContext();
+  const { ticketTotalAmount } = useBookingContext();
 
   const paymentOptions = [
     {
@@ -28,7 +33,10 @@ const Step3 = (props: any) => {
         <PaymentOptionContainer data={paymentOptions} />
       </div>
 
-      <TotalAmount amount={40} onClick={() => moveToNext(3)} />
+      <TotalAmount
+        amount={ticketTotalAmount + foodTotalAmount}
+        onClick={() => moveToNext(3)}
+      />
     </div>
   );
 };

@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { BuyTicketContainer, RightArrow } from "mta-components";
 import Step1 from "./Step1";
-import Step3 from "./Step3";
 import Step2 from "./Step2";
+import Step3 from "./Step3";
 import Step4 from "./Step4";
 import { useNavigate } from "react-router-dom";
+import { useBookingContext } from "../../context/BookingContext";
+import { useFoodContext } from "../../context/FoodContext";
 
 const BuyTicket = () => {
   const navigate = useNavigate();
+  const {
+    selectedMovieTheater,
+    selectedSession,
+    handleSelectMovieTheater,
+    handleSelectSession,
+  } = useBookingContext();
+  const { foodTotalAmount } = useFoodContext();
 
   const steps = [1, 2, 3, 4];
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -21,33 +30,30 @@ const BuyTicket = () => {
     setCurrentStep(step);
   };
 
-  const [selectedTheater, setSelectedTheater] = useState<string>("");
-  const [selectedSession, setSelectedSession] = useState<string>("");
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-
   const selectDivData = [
     {
-      text: selectedTheater || "Choose a movie theater *",
+      text: selectedMovieTheater || "Choose a movie theater *",
       icon: <RightArrow />,
-      isSelected: selectedTheater != "",
+      isSelected: selectedMovieTheater !== "",
       onClick: () => {
-        if (selectedTheater === "") setSelectedTheater("NY - Cinema Village");
-        else setSelectedTheater("");
+        if (selectedMovieTheater === "")
+          handleSelectMovieTheater("NY - Cinema Village");
+        else handleSelectMovieTheater("");
       },
     },
     {
       text: selectedSession || "Select session *",
       icon: <RightArrow />,
-      isSelected: selectedSession != "",
+      isSelected: selectedSession !== "",
       onClick: () => {
-        if (selectedSession == "") setSelectedSession("26 Oct, 8 PM - 11 PM");
-        else setSelectedSession("");
+        if (selectedSession === "") handleSelectSession("3 Nov, 8 PM - 11 PM");
+        else handleSelectSession("");
       },
     },
     {
       text: "Buffet Products",
       icon: <RightArrow />,
-      isSelected: selectedItems.length > 0,
+      isSelected: foodTotalAmount > 0,
       onClick: () => {
         navigate("/buyfood");
       },
@@ -64,10 +70,8 @@ const BuyTicket = () => {
         <Step1
           moveToNext={moveToNext}
           selectDivData={selectDivData}
-          selectedTheater={selectedTheater}
+          selectedTheater={selectedMovieTheater}
           selectedSession={selectedSession}
-          selectedItems={selectedItems}
-          setSelectedItems={setSelectedItems}
         />
       )}
       {currentStep === 1 && <Step2 moveToNext={moveToNext} />}

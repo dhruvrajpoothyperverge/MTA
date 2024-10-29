@@ -6,63 +6,114 @@ import {
   Button,
   RightArrow,
 } from "mta-components";
+import { useBookingContext } from "../../context/BookingContext";
+import { getSeatLabel } from "../../utils/utility";
+import { useFoodContext } from "../../context/FoodContext";
+import { useEffect } from "react";
+import { useMovieContext } from "../../context/MovieContext";
 
 const Step2 = (props: any) => {
   const { moveToNext } = props;
 
-  const onSeatClick = () => {};
+  const { currentMovie } = useMovieContext();
+  const { foodItems, foodTotalAmount } = useFoodContext();
+
+  const {
+    selectedMovieTheater,
+    selectedSession,
+    selectedSeats,
+    addSelectedSeat,
+    removeSelectedSeat,
+    adults,
+    incrementAdults,
+    decrementAdults,
+    childs,
+    incrementChild,
+    decrementChild,
+    filledSeats,
+    ticketTotalAmount,
+    updateTicketTotalAmount,
+  } = useBookingContext();
+
+  const handleSeatClick = (
+    rowIndex: number,
+    seatIndex: number,
+    status: "vacant" | "selected" | "filled" | "invalid"
+  ) => {
+    if (status === "vacant") {
+      removeSelectedSeat({ row: rowIndex, col: seatIndex });
+    } else if (status === "selected") {
+      addSelectedSeat({ row: rowIndex, col: seatIndex });
+    }
+  };
+
+  const totalSeats = selectedSeats.length;
 
   const ticketDetails = [
     {
-      label: "Adult Ticket",
-      quantity: 1,
-      maxAllowed: 5,
+      label: "ADULT",
+      quantity: adults,
+      maxAllowed: totalSeats - childs,
       onIncrease: () => {
-        console.log("Increased Adult Ticket quantity");
+        if (adults < totalSeats) {
+          incrementAdults();
+        }
       },
       onDecrease: () => {
-        console.log("Decreased Adult Ticket quantity");
+        if (adults > 0) decrementAdults();
       },
     },
     {
-      label: "Child Ticket",
-      quantity: 0,
-      maxAllowed: 3,
+      label: "CHILD",
+      quantity: childs,
+      maxAllowed: totalSeats - adults,
       onIncrease: () => {
-        console.log("Increased Child Ticket quantity");
+        if (childs < totalSeats) {
+          incrementChild();
+        }
       },
       onDecrease: () => {
-        console.log("Decreased Child Ticket quantity");
+        if (childs > 0) decrementChild();
       },
     },
   ];
 
-  const bookingData = {
-    movie: "Kung Fu Panda 4",
-    adult: 2,
-    child: 0,
-    session: "20:30 pm - 22:00 pm",
-    seatNumbers: ["C3", "C4"],
-    buffetProducts: [],
-    buffetTotal: 0,
-    theater: "Cinema Village",
-    amount: 40,
+  const summaryData = {
+    movie: currentMovie?.title || "",
+    adult: adults,
+    child: childs,
+    session: selectedSession,
+    seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
+    theater: selectedMovieTheater,
+    buffetProducts: foodItems,
+    buffetTotal: foodTotalAmount,
+    ticketTotal: ticketTotalAmount,
   };
+
+  useEffect(() => {
+    updateTicketTotalAmount(adults, childs, 20, 10); // example price
+  });
 
   return (
     <div>
-      <div className="flex flex-col gap-4 px-5 pb-28">
-        <SeatMatrixContainer onSeatClick={onSeatClick} />
+      <div className="flex flex-col gap-6 px-5 pb-28">
+        <SeatMatrixContainer
+          selectedSeats={selectedSeats}
+          filledSeats={filledSeats}
+          onSeatClick={handleSeatClick}
+        />
 
         <TicketDetailsContainer data={ticketDetails} />
 
-        <BookingSummary data={bookingData} />
+        <BookingSummary data={summaryData} />
       </div>
 
       <StickyBottomContainer>
         <Button
+          variant="primary"
           text="Payment Options"
           icon={<RightArrow />}
+          disabled={adults + childs === 0}
           onClick={() => moveToNext(2)}
         />
       </StickyBottomContainer>

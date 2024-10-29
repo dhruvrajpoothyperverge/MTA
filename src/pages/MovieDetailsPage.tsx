@@ -7,60 +7,84 @@ import {
   Button,
   RightArrow,
 } from "mta-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMovieContext } from "../context/MovieContext";
+import { useEffect } from "react";
 
 const MovieDetailsPage = () => {
-  const movieDetails = {
-    image: "/assets/kungfupanda.png",
-    title: "Kung Fu Panda 4",
-    productionHouse: "Dreamworks Animation",
-    rating: 8.5,
-    imdb: 7.9,
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate ipsa distinctio veritatis suscipit laborum iste aut facilis culpa similique. Quas corporis impedit at neque nesciunt eligendi sint eius natus iusto. Odio pariatur dicta culpa voluptas neque similique est molestiae inventore hic libero tempore deserunt sed aspernatur praesentium sunt, aut ex corporis consequuntur. Voluptatum aut amet doloribus pariatur, assumenda possimus esse tempora adipisci atque laudantium odit inventore soluta voluptate in. Corporis quidem necessitatibus sequi voluptatum iste odit numquam voluptatibus, nesciunt quaerat voluptas tenetur dignissimos neque ipsum facere facilis fuga placeat aut illum, porro expedita sed ea incidunt. Veritatis labore assumenda facere!",
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { currentMovie, setCurrentMovie, addFavorite, favorites } =
+    useMovieContext();
+
+  const fetchMovieDetails = async (movieId: string) => {
+    setCurrentMovie({
+      _id: movieId,
+      image: "/assets/kungfupanda.png",
+      title: "Kung Fu Panda 4",
+      productionHouse: "Dreamworks Animation",
+      rating: 4.5,
+      imdb: 7.9,
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate ipsa distinctio veritatis suscipit laborum iste aut facilis culpa similique. Quas corporis impedit at neque nesciunt eligendi sint eius natus iusto. Odio pariatur dicta culpa voluptas neque similique est molestiae inventore hic libero tempore deserunt sed aspernatur praesentium sunt, aut ex corporis consequuntur. Voluptatum aut amet doloribus pariatur, assumenda possimus esse tempora adipisci atque laudantium odit inventore soluta voluptate in. Corporis quidem necessitatibus sequi voluptatum iste odit numquam voluptatibus, nesciunt quaerat voluptas tenetur dignissimos neque ipsum facere facilis fuga placeat aut illum, porro expedita sed ea incidunt. Veritatis labore assumenda facere!",
+      videoLink: "",
+      videoThumbnail: "/assets/kungfupanda.png",
+      imagesInTheMovie: [
+        "/assets/spiderman.png",
+        "/assets/spiderman.png",
+        "/assets/spiderman.png",
+      ],
+    });
   };
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (id) fetchMovieDetails(id);
+  }, [id]);
 
   const handleBackClick = () => {
-    // Handle back navigation
     navigate("/home");
   };
 
   const handleHeartClick = () => {
-    // Handle adding to favorites
+    if (currentMovie) {
+      const isFavorite = favorites.includes(currentMovie._id);
+      if (!isFavorite) {
+        addFavorite(currentMovie._id);
+      }
+    }
   };
 
-  const imagesInTheMovie = [
-    {
-      image: "/assets/spiderman.png",
-      link: "/moviedetails/1",
-    },
-    {
-      image: "/assets/spiderman.png",
-      link: "/moviedetails/1",
-    },
-    {
-      image: "/assets/spiderman.png",
-      link: "/moviedetails/1",
-    },
-  ];
+  const imagesInTheMovie =
+    currentMovie?.imagesInTheMovie?.map((image) => ({
+      image,
+      link: `/moviedetails/${currentMovie._id}`,
+    })) || [];
 
   return (
     <div>
-      <MovieInfoContainer
-        onBackClick={handleBackClick}
-        onHeartClick={handleHeartClick}
-        videoLink="https://example.com/movie-video.mp4"
-        videoThumbnail="/assets/spiderman.png"
-        movieInfo={movieDetails}
-      />
+      {currentMovie ? (
+        <MovieInfoContainer
+          onBackClick={handleBackClick}
+          onHeartClick={handleHeartClick}
+          videoLink={currentMovie.videoLink}
+          videoThumbnail={currentMovie.videoThumbnail}
+          movieInfo={currentMovie}
+        />
+      ) : (
+        <div>Movie details not found.</div>
+      )}
 
       <div className="flex flex-col gap-4 px-5 pb-28">
-        <Description data={movieDetails.description} />
+        <Description
+          data={currentMovie?.description || "No description available."}
+        />
 
         <HeadingContainer label="Images in the movie">
-          <Slider data={imagesInTheMovie} />
+          {imagesInTheMovie.length > 0 ? (
+            <Slider data={imagesInTheMovie} />
+          ) : (
+            <div>No images available for this movie.</div>
+          )}
         </HeadingContainer>
       </div>
 
