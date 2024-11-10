@@ -14,51 +14,36 @@ import { useEffect } from "react";
 const MovieDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { currentMovie, setCurrentMovie, addFavorite, favorites } =
-    useMovieContext();
-
-  const fetchMovieDetails = async (movieId: string) => {
-    setCurrentMovie({
-      _id: movieId,
-      image: "/assets/kungfupanda.png",
-      title: "Kung Fu Panda 4",
-      productionHouse: "Dreamworks Animation",
-      rating: 4.5,
-      imdb: 7.9,
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate ipsa distinctio veritatis suscipit laborum iste aut facilis culpa similique. Quas corporis impedit at neque nesciunt eligendi sint eius natus iusto. Odio pariatur dicta culpa voluptas neque similique est molestiae inventore hic libero tempore deserunt sed aspernatur praesentium sunt, aut ex corporis consequuntur. Voluptatum aut amet doloribus pariatur, assumenda possimus esse tempora adipisci atque laudantium odit inventore soluta voluptate in. Corporis quidem necessitatibus sequi voluptatum iste odit numquam voluptatibus, nesciunt quaerat voluptas tenetur dignissimos neque ipsum facere facilis fuga placeat aut illum, porro expedita sed ea incidunt. Veritatis labore assumenda facere!",
-      videoLink: "",
-      videoThumbnail: "/assets/kungfupanda.png",
-      imagesInTheMovie: [
-        "/assets/spiderman.png",
-        "/assets/spiderman.png",
-        "/assets/spiderman.png",
-      ],
-    });
-  };
+  const {
+    addFavorite,
+    removeFavorite,
+    favorites,
+    fetchMovieDetails,
+    currentMovie,
+  } = useMovieContext();
 
   useEffect(() => {
     if (id) fetchMovieDetails(id);
-  }, [id]);
+  }, [id, fetchMovieDetails]);
 
-  const handleBackClick = () => {
-    navigate("/home");
-  };
+  const handleBackClick = () => navigate('/home');
 
   const handleHeartClick = () => {
     if (currentMovie) {
-      const isFavorite = favorites.includes(currentMovie._id);
-      if (!isFavorite) {
-        addFavorite(currentMovie._id);
+      const isFavorite = favorites.some(
+        (movie) => movie._id === currentMovie._id
+      );
+      if (isFavorite) {
+        removeFavorite(currentMovie._id);
+      } else {
+        addFavorite(currentMovie._id, currentMovie.title, currentMovie.image);
       }
     }
   };
 
-  const imagesInTheMovie =
-    currentMovie?.imagesInTheMovie?.map((image) => ({
-      image,
-      link: `/moviedetails/${currentMovie._id}`,
-    })) || [];
+  const isFavorite = currentMovie
+    ? favorites.some((movie) => movie._id === currentMovie._id)
+    : false;
 
   return (
     <div>
@@ -69,6 +54,7 @@ const MovieDetailsPage = () => {
           videoLink={currentMovie.videoLink}
           videoThumbnail={currentMovie.videoThumbnail}
           movieInfo={currentMovie}
+          isFavorite={isFavorite}
         />
       ) : (
         <div>Movie details not found.</div>
@@ -78,10 +64,10 @@ const MovieDetailsPage = () => {
         <Description
           data={currentMovie?.description || "No description available."}
         />
-
         <HeadingContainer label="Images in the movie">
-          {imagesInTheMovie.length > 0 ? (
-            <Slider data={imagesInTheMovie} />
+          {currentMovie?.imagesInTheMovie &&
+          currentMovie?.imagesInTheMovie.length > 0 ? (
+            <Slider data={currentMovie?.imagesInTheMovie || []} />
           ) : (
             <div>No images available for this movie.</div>
           )}
@@ -92,7 +78,7 @@ const MovieDetailsPage = () => {
         <Button
           text="Buy Ticket Now"
           icon={<RightArrow />}
-          onClick={() => navigate("/buyticket")}
+          onClick={() => navigate(`/buyticket/${currentMovie?._id}`)}
         />
       </StickyBottomContainer>
     </div>

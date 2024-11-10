@@ -5,8 +5,9 @@ import { useBookingContext } from "../../context/BookingContext";
 const Step3 = (props: any) => {
   const { moveToNext } = props;
 
-  const { foodTotalAmount } = useFoodContext();
-  const { ticketTotalAmount } = useBookingContext();
+  const { getTotalAmount } = useFoodContext();
+  const { ticketTotalAmount, selectedPaymentOption, onPaymentSelection } =
+    useBookingContext();
 
   const paymentOptions = [
     {
@@ -27,15 +28,23 @@ const Step3 = (props: any) => {
     },
   ];
 
+  const handlePayNow = () => {
+    moveToNext(3);
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-4 px-5 pb-64">
-        <PaymentOptionContainer data={paymentOptions} />
+        <PaymentOptionContainer
+          data={paymentOptions}
+          selectedOption={selectedPaymentOption}
+          onSelect={onPaymentSelection}
+        />
       </div>
 
       <TotalAmount
-        amount={ticketTotalAmount + foodTotalAmount}
-        onClick={() => moveToNext(3)}
+        amount={ticketTotalAmount + getTotalAmount()}
+        onClick={handlePayNow}
       />
     </div>
   );

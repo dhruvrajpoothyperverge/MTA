@@ -16,7 +16,7 @@ const Step2 = (props: any) => {
   const { moveToNext } = props;
 
   const { currentMovie } = useMovieContext();
-  const { foodItems, foodTotalAmount } = useFoodContext();
+  const { selectedFoodItems, getTotalAmount } = useFoodContext();
 
   const {
     selectedMovieTheater,
@@ -33,6 +33,7 @@ const Step2 = (props: any) => {
     filledSeats,
     ticketTotalAmount,
     updateTicketTotalAmount,
+    totalSeats,
   } = useBookingContext();
 
   const handleSeatClick = (
@@ -47,17 +48,13 @@ const Step2 = (props: any) => {
     }
   };
 
-  const totalSeats = selectedSeats.length;
-
   const ticketDetails = [
     {
       label: "ADULT",
       quantity: adults,
       maxAllowed: totalSeats - childs,
       onIncrease: () => {
-        if (adults < totalSeats) {
-          incrementAdults();
-        }
+        incrementAdults();
       },
       onDecrease: () => {
         if (adults > 0) decrementAdults();
@@ -68,9 +65,7 @@ const Step2 = (props: any) => {
       quantity: childs,
       maxAllowed: totalSeats - adults,
       onIncrease: () => {
-        if (childs < totalSeats) {
-          incrementChild();
-        }
+        incrementChild();
       },
       onDecrease: () => {
         if (childs > 0) decrementChild();
@@ -85,8 +80,8 @@ const Step2 = (props: any) => {
     session: selectedSession,
     seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
     theater: selectedMovieTheater,
-    buffetProducts: foodItems,
-    buffetTotal: foodTotalAmount,
+    buffetProducts: selectedFoodItems,
+    buffetTotal: getTotalAmount(),
     ticketTotal: ticketTotalAmount,
   };
 
@@ -113,7 +108,9 @@ const Step2 = (props: any) => {
           variant="primary"
           text="Payment Options"
           icon={<RightArrow />}
-          disabled={adults + childs === 0}
+          disabled={
+            adults + childs === 0 || selectedSeats.length !== adults + childs
+          }
           onClick={() => moveToNext(2)}
         />
       </StickyBottomContainer>

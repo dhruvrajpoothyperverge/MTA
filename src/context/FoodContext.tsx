@@ -7,11 +7,17 @@ interface BuffetItem {
   price: number;
 }
 
+interface SelectedFoodItem {
+  label: string;
+  quantity: number;
+}
+
 interface FoodContextType {
   foodItems: BuffetItem[];
-  quantities: number[];
-  updateQuantities: (index: number, change: number) => void;
-  foodTotalAmount: number;
+  selectedFoodItems: SelectedFoodItem[];
+  updateQuantity: (label: string, quantity: number) => void;
+  getTotalAmount: () => number;
+  resetFoodBooking: () => void;
 }
 
 const FoodContext = createContext<FoodContextType | undefined>(undefined);
@@ -32,39 +38,53 @@ export const FoodContextProvider = ({ children }: { children: ReactNode }) => {
     },
     {
       image: "/assets/fooditem.png",
-      label: "Pizza",
+      label: "Pasta",
       items: ["Pepperoni", "Margherita"],
       price: 10,
     },
     {
       image: "/assets/fooditem.png",
-      label: "Pizza",
+      label: "Salad",
       items: ["Pepperoni", "Margherita"],
       price: 15,
     },
   ];
 
-  const initialStates = Array.from({ length: foodItems.length }, () => 0);
-  const [quantities, setQuantities] = useState<number[]>(initialStates);
+  const [selectedFoodItems, setSelectedFoodItems] = useState<SelectedFoodItem[]>([]);
 
-  const updateQuantities = (index: number, change: number) => {
-    setQuantities((prev) => {
-      const newQuantities = [...prev];
-      const newQuantity = newQuantities[index] + change;
-      if (newQuantity < 0) return newQuantities;
-      newQuantities[index] = newQuantity;
-      return newQuantities;
+  const updateQuantity = (label: string, quantity: number) => {
+    setSelectedFoodItems((prevSelected) => {
+      const itemIndex = prevSelected.findIndex((item) => item.label === label);
+      if (itemIndex === -1) {
+        return [...prevSelected, { label, quantity }];
+      } else {
+        const updatedItems = [...prevSelected];
+        updatedItems[itemIndex] = { label, quantity };
+        return updatedItems;
+      }
     });
   };
 
-  const foodTotalAmount = quantities.reduce(
-    (total, qty, idx) => total + qty * foodItems[idx].price,
-    0
-  );
+  const getTotalAmount = () => {
+    return selectedFoodItems.reduce((total, selectedItem) => {
+      const food = foodItems.find((item) => item.label === selectedItem.label);
+      return total + (food?.price ?? 0) * selectedItem.quantity;
+    }, 0);
+  };
+
+  const resetFoodBooking = () => {
+    setSelectedFoodItems([]);
+  };
 
   return (
     <FoodContext.Provider
-      value={{ foodItems, quantities, updateQuantities, foodTotalAmount }}
+      value={{
+        foodItems,
+        selectedFoodItems,
+        updateQuantity,
+        getTotalAmount,
+        resetFoodBooking,
+      }}
     >
       {children}
     </FoodContext.Provider>

@@ -5,17 +5,19 @@ import {
   StickyBottomContainer,
   Button,
 } from "mta-components";
+import { useMovieContext } from "../../context/MovieContext";
 
 const Step1 = (props: any) => {
   const { moveToNext, selectDivData, selectedTheater, selectedSession } = props;
+  const { currentMovie } = useMovieContext();
 
   return (
     <div>
       <div className="flex flex-col gap-4 px-5 pb-28">
         <MovieInfoSummary
-          image={"/assets/spiderman.png"}
-          title={"Kung Fu Panda 4"}
-          productionName={"DreamWorks Animation"}
+          image={currentMovie?.videoThumbnail || ""}
+          title={currentMovie?.title || ""}
+          productionName={currentMovie?.productionHouse || ""}
         />
 
         <SelectDivContainer data={selectDivData} />

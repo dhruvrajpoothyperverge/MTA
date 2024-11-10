@@ -9,7 +9,9 @@ const BookingDetails = () => {
   // current selected movie details instead of ticket booked details
 
   const { currentMovie } = useMovieContext();
-  const { foodTotalAmount, foodItems } = useFoodContext();
+  const { resetBooking } = useBookingContext();
+  const { getTotalAmount, selectedFoodItems, resetFoodBooking } =
+    useFoodContext();
   const {
     selectedSeats,
     adults,
@@ -26,22 +28,24 @@ const BookingDetails = () => {
     session: selectedSession,
     seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
     theater: selectedMovieTheater,
-    buffetProducts: foodItems,
-    buffetTotal: foodTotalAmount,
+    buffetProducts: selectedFoodItems,
+    buffetTotal: getTotalAmount(),
     ticketTotal: ticketTotalAmount,
   };
 
   const navigate = useNavigate();
 
+  const onClick = () => {
+    navigate("/home");
+    resetBooking();
+    resetFoodBooking();
+  };
+
   return (
     <div className="flex flex-col justify-center min-h-screen gap-10 px-5">
       <QRcodeContainer value="Booked" />
       <BookingSummary data={bookingData} />
-      <Button
-        text="Go to Home"
-        variant="secondary"
-        onClick={() => navigate("/home")}
-      />
+      <Button text="Go to Home" variant="secondary" onClick={onClick} />
     </div>
   );
 };

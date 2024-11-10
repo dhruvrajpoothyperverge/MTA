@@ -1,14 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BuyTicketContainer, RightArrow } from "mta-components";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useBookingContext } from "../../context/BookingContext";
 import { useFoodContext } from "../../context/FoodContext";
+import { useMovieContext } from "../../context/MovieContext";
 
 const BuyTicket = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const {
     selectedMovieTheater,
@@ -16,13 +18,20 @@ const BuyTicket = () => {
     handleSelectMovieTheater,
     handleSelectSession,
   } = useBookingContext();
-  const { foodTotalAmount } = useFoodContext();
+  const { selectedFoodItems } = useFoodContext();
+  const { fetchMovieDetails, currentMovie } = useMovieContext();
+
+  useEffect(() => {
+    if (id && !currentMovie) {
+      fetchMovieDetails(id);
+    }
+  }, [id, currentMovie]);
 
   const steps = [1, 2, 3, 4];
   const [currentStep, setCurrentStep] = useState<number>(0);
 
   const handleBackClick = () => {
-    if (currentStep === 0) navigate("/moviedetails/1");
+    if (currentStep === 0) navigate(`/moviedetails/${currentMovie?._id}`);
     else setCurrentStep((prev) => prev - 1);
   };
 
@@ -53,9 +62,9 @@ const BuyTicket = () => {
     {
       text: "Buffet Products",
       icon: <RightArrow />,
-      isSelected: foodTotalAmount > 0,
+      isSelected: selectedFoodItems.length > 0,
       onClick: () => {
-        navigate("/buyfood");
+        navigate(`/buyfood/${currentMovie?._id}`);
       },
     },
   ];

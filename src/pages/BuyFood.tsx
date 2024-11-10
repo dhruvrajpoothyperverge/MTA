@@ -1,22 +1,36 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFoodContext } from "../context/FoodContext";
+import { useMovieContext } from "../context/MovieContext";
 import {
   FoodItemContainer,
   AmountAndCartContainer,
   LeftArrow,
 } from "mta-components";
+import { useEffect } from "react";
 
 const BuyFood = () => {
-  const { foodItems, quantities, updateQuantities, foodTotalAmount } =
-    useFoodContext();
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { foodItems, selectedFoodItems, updateQuantity, getTotalAmount } =
+    useFoodContext();
+  const { fetchMovieDetails, currentMovie } = useMovieContext();
+
+  useEffect(() => {
+    if (id && !currentMovie) {
+      fetchMovieDetails(id);
+    }
+  }, [id, currentMovie, fetchMovieDetails]);
 
   const handleAddToCart = () => {
-    navigate("/buyticket");
+    if (currentMovie) {
+      navigate(`/buyticket/${currentMovie._id}`);
+    }
   };
 
   const onBackClick = () => {
-    navigate("/buyticket");
+    if (currentMovie) {
+      navigate(`/buyticket/${currentMovie._id}`);
+    }
   };
 
   return (
@@ -30,17 +44,29 @@ const BuyFood = () => {
         </button>
 
         <FoodItemContainer
-          data={foodItems.map((item, index) => ({
+          data={foodItems.map((item) => ({
             ...item,
-            quantity: quantities[index],
-            onIncrease: () => updateQuantities(index, 1),
-            onDecrease: () => updateQuantities(index, -1),
+            quantity:
+              selectedFoodItems.find((selected) => selected.label === item.label)
+                ?.quantity ?? 0,
+            onIncrease: () =>
+              updateQuantity(
+                item.label,
+                (selectedFoodItems.find((selected) => selected.label === item.label)
+                  ?.quantity ?? 0) + 1
+              ),
+            onDecrease: () =>
+              updateQuantity(
+                item.label,
+                (selectedFoodItems.find((selected) => selected.label === item.label)
+                  ?.quantity ?? 0) - 1
+              ),
           }))}
         />
       </div>
 
       <AmountAndCartContainer
-        totalAmount={foodTotalAmount}
+        totalAmount={getTotalAmount()}
         addToCart={handleAddToCart}
       />
     </div>

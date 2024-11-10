@@ -1,14 +1,35 @@
 import { PaymentStatus } from "mta-components";
 import { useNavigate } from "react-router-dom";
+import { useBookingContext } from "../../context/BookingContext";
+import { useFoodContext } from "../../context/FoodContext";
 
 const Step4 = () => {
   const navigate = useNavigate();
+  const { resetBooking } = useBookingContext();
+  const { resetFoodBooking } = useFoodContext();
+
+  const onGoHome = () => {
+    navigate("/home");
+    resetBooking();
+    resetFoodBooking();
+  };
+
+  const onTryAgain = () => {
+    navigate("/home");
+    resetBooking();
+    resetFoodBooking();
+  };
+
+  const onViewTicket = () => {
+    navigate("/bookingdetails/1");
+  };
+
   return (
     <PaymentStatus
       status="success"
-      onGoHome={() => navigate("/home")}
-      onTryAgain={() => navigate("/home")}
-      onViewTicket={() => navigate("/bookingdetails/1")}
+      onGoHome={onGoHome}
+      onTryAgain={onTryAgain}
+      onViewTicket={onViewTicket}
     />
   );
 };

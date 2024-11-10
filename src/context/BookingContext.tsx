@@ -20,6 +20,7 @@ interface BookingContextType {
   filledSeats: Seat[];
   addSelectedSeat: (seat: Seat) => void;
   removeSelectedSeat: (seat: Seat) => void;
+  totalSeats: number;
   adults: number;
   incrementAdults: () => void;
   decrementAdults: () => void;
@@ -33,25 +34,60 @@ interface BookingContextType {
     adultPrice: number,
     childPrice: number
   ) => void;
+  selectedPaymentOption: string | null;
+  onPaymentSelection: (paymentOption: string) => void;
+  resetBooking: () => void;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
 export function BookingContextProvider({ children }: { children: ReactNode }) {
+  const [rowSize, setRowSize] = useState<number>(9);
+  const [colSize, setColSize] = useState<number>(12);
+  const [invalidRows, setInvalidRows] = useState<number[]>([4]);
+  const [invalidCols, setInvalidCols] = useState<number[]>([4]);
+  const [totalSeats, setTotalSeats] = useState<number>(0);
   const [selectedMovieTheater, setSelectedMovieTheater] = useState<string>("");
   const [selectedSession, setSelectedSession] = useState<string>("");
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
   const [filledSeats, setFilledSeats] = useState<Seat[]>([]);
   const [adults, setAdults] = useState<number>(0);
-  const [childs, setChild] = useState<number>(0);
+  const [childs, setChilds] = useState<number>(0);
   const [ticketTotalAmount, setTicketTotal] = useState<number>(0);
+  const [selectedPaymentOption, setSelectedPaymentOption] = useState<
+    string | null
+  >(null);
+
+  useEffect(() => {
+    setRowSize(9);
+    setColSize(12);
+    setInvalidRows([4]);
+    setInvalidCols([4]);
+  }, []);
+
+  useEffect(() => {
+    const validRows = rowSize - invalidRows.length;
+    const validCols = colSize - invalidCols.length;
+    setTotalSeats(validRows * validCols);
+  }, [rowSize, colSize, invalidRows, invalidCols]);
 
   const handleSelectMovieTheater = (theater: string) =>
     setSelectedMovieTheater(theater);
   const handleSelectSession = (session: string) => setSelectedSession(session);
 
+  const calculateAvailableSeats = () => {
+    const filledCount = filledSeats.length;
+    return totalSeats - filledCount;
+  };
+
   const addSelectedSeat = (seat: Seat) => {
-    setSelectedSeats((prev) => [...prev, seat]);
+    const availableSeats = calculateAvailableSeats();
+    if (
+      selectedSeats.length < adults + childs &&
+      selectedSeats.length < availableSeats
+    ) {
+      setSelectedSeats((prev) => [...prev, seat]);
+    }
   };
 
   const removeSelectedSeat = (seat: Seat) => {
@@ -60,13 +96,28 @@ export function BookingContextProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const incrementAdults = () => setAdults((prev) => prev + 1);
-  const decrementAdults = () => setAdults((prev) => Math.max(prev - 1, 0));
+  const incrementAdults = () => {
+    const availableSeats = calculateAvailableSeats();
+    if (adults + childs < availableSeats) {
+      setAdults((prev) => prev + 1);
+    }
+  };
 
-  const incrementChild = () => setChild((prev) => prev + 1);
-  const decrementChild = () => setChild((prev) => Math.max(prev - 1, 0));
+  const decrementAdults = () => {
+    setAdults((prev) => Math.max(prev - 1, 0));
+  };
 
-  // Simulate fetching filled seats from the backend
+  const incrementChild = () => {
+    const availableSeats = calculateAvailableSeats();
+    if (adults + childs < availableSeats) {
+      setChilds((prev) => prev + 1);
+    }
+  };
+
+  const decrementChild = () => {
+    setChilds((prev) => Math.max(prev - 1, 0));
+  };
+
   const fetchFilledSeats = () => {
     const seatsFromBackend = [
       { row: 1, col: 2 },
@@ -88,6 +139,20 @@ export function BookingContextProvider({ children }: { children: ReactNode }) {
     setTicketTotal(adults * adultPrice + childs * childPrice);
   };
 
+  const resetBooking = () => {
+    setSelectedMovieTheater("");
+    setSelectedSession("");
+    setSelectedSeats([]);
+    setAdults(0);
+    setChilds(0);
+    setTicketTotal(0);
+    setSelectedPaymentOption(null);
+  };
+
+  const onPaymentSelection = (paymentOption: string) => {
+    setSelectedPaymentOption(paymentOption);
+  };
+
   return (
     <BookingContext.Provider
       value={{
@@ -99,6 +164,7 @@ export function BookingContextProvider({ children }: { children: ReactNode }) {
         filledSeats,
         addSelectedSeat,
         removeSelectedSeat,
+        totalSeats,
         adults,
         incrementAdults,
         decrementAdults,
@@ -107,6 +173,9 @@ export function BookingContextProvider({ children }: { children: ReactNode }) {
         decrementChild,
         ticketTotalAmount,
         updateTicketTotalAmount,
+        selectedPaymentOption,
+        onPaymentSelection,
+        resetBooking,
       }}
     >
       {children}

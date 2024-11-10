@@ -11,7 +11,7 @@ const App = () => {
       <MovieContextProvider>
         <BookingContextProvider>
           <FoodContextProvider>
-            <div className="bg-gradient-to-b from-[#000000ea] via-[#000000ea] to-[#211741] min-h-screen">
+            <div className="bg-gradient-to-b from-[#000000ea] via-[#000000ea] to-[#211741] text-white min-h-screen">
               <Router />
             </div>
           </FoodContextProvider>
