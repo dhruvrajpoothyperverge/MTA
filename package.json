@@ -14,7 +14,7 @@
   "dependencies": {
     "axios": "^1.7.7",
     "framer-motion": "^11.11.9",
-    "mta-components": "^1.2.2",
+    "mta-components": "^1.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-qr-code": "^2.0.15",

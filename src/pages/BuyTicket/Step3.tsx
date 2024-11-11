@@ -1,13 +1,39 @@
 import { PaymentOptionContainer, TotalAmount } from "mta-components";
 import { useFoodContext } from "../../context/FoodContext";
 import { useBookingContext } from "../../context/BookingContext";
+import { useTicketContext } from "../../context/TicketContext";
+import { getSeatLabel } from "../../utils/utility";
+import { useMovieContext } from "../../context/MovieContext";
 
 const Step3 = (props: any) => {
   const { moveToNext } = props;
 
-  const { getTotalAmount } = useFoodContext();
-  const { ticketTotalAmount, selectedPaymentOption, onPaymentSelection } =
-    useBookingContext();
+  const { currentMovie } = useMovieContext();
+  const { getTotalAmount, selectedFoodItems } = useFoodContext();
+  const {
+    selectedSeats,
+    adults,
+    childs,
+    ticketTotalAmount,
+    selectedMovieTheater,
+    selectedSession,
+    selectedPaymentOption,
+    onPaymentSelection,
+  } = useBookingContext();
+
+  const { bookTicket } = useTicketContext();
+
+  const bookingData = {
+    movie: currentMovie?.title || "",
+    adult: adults,
+    child: childs,
+    session: selectedSession,
+    seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
+    theater: selectedMovieTheater,
+    buffetProducts: selectedFoodItems,
+    buffetTotal: getTotalAmount(),
+    ticketTotal: ticketTotalAmount,
+  };
 
   const paymentOptions = [
     {
@@ -28,7 +54,12 @@ const Step3 = (props: any) => {
     },
   ];
 
+  const handleBookTicket = () => {
+    bookTicket(bookingData);
+  };
+
   const handlePayNow = () => {
+    handleBookTicket();
     moveToNext(3);
   };
 
@@ -45,6 +76,7 @@ const Step3 = (props: any) => {
       <TotalAmount
         amount={ticketTotalAmount + getTotalAmount()}
         onClick={handlePayNow}
+        isDisabled={selectedPaymentOption === null}
       />
     </div>
   );
