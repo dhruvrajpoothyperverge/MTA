@@ -10,6 +10,7 @@ import BuyFood from "../pages/BuyFood";
 import BookedTickets from "../pages/BookedTickets";
 import Favorites from "../pages/Favorites";
 import ProfilePage from "../pages/ProfilePage";
+import PrivateRoute from "./PrivateRoutes";
 
 const Router = () => {
   return (
@@ -18,13 +19,31 @@ const Router = () => {
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/home" element={<HomePage />} />
-      <Route path="/bookingdetails/:id" element={<BookingDetails />} />
-      <Route path="/buyticket/:id" element={<BuyTicket />} />
       <Route path="/moviedetails/:id" element={<MovieDetailsPage />} />
-      <Route path="/buyfood/:id" element={<BuyFood />} />
-      <Route path="/bookedtickets" element={<BookedTickets />} />
-      <Route path="/favorites" element={<Favorites />} />
-      <Route path="/profile" element={<ProfilePage />} />
+      <Route
+        path="/bookingdetails/:id"
+        element={<PrivateRoute element={<BookingDetails />} />}
+      />
+      <Route
+        path="/buyticket/:id"
+        element={<PrivateRoute element={<BuyTicket />} />}
+      />
+      <Route
+        path="/buyfood/:id"
+        element={<PrivateRoute element={<BuyFood />} />}
+      />
+      <Route
+        path="/bookedtickets"
+        element={<PrivateRoute element={<BookedTickets />} />}
+      />
+      <Route
+        path="/favorites"
+        element={<PrivateRoute element={<Favorites />} />}
+      />
+      <Route
+        path="/profile"
+        element={<PrivateRoute element={<ProfilePage />} />}
+      />
     </Routes>
   );
 };

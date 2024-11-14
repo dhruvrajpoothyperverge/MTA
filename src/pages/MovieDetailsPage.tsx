@@ -10,23 +10,19 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useMovieContext } from "../context/MovieContext";
 import { useEffect } from "react";
+import { useFavoriteContext } from "../context/FavoriteContext";
 
 const MovieDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const {
-    addFavorite,
-    removeFavorite,
-    favorites,
-    fetchMovieDetails,
-    currentMovie,
-  } = useMovieContext();
+  const { fetchMovieDetails, currentMovie } = useMovieContext();
+  const { favorites, addFavorite, removeFavorite } = useFavoriteContext();
 
   useEffect(() => {
     if (id) fetchMovieDetails(id);
   }, [id, fetchMovieDetails]);
 
-  const handleBackClick = () => navigate('/home');
+  const handleBackClick = () => navigate("/home");
 
   const handleHeartClick = () => {
     if (currentMovie) {
