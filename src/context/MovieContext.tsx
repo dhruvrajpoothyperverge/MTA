@@ -8,12 +8,6 @@ import {
 import axios from "axios";
 import { serverurl } from "../config";
 
-interface FavoriteMovie {
-  _id: string;
-  title: string;
-  image: string;
-}
-
 export interface Movie {
   _id: string;
   image: string;
@@ -41,17 +35,29 @@ interface NewMovie {
   link: string;
 }
 
+interface ComingSoonMovie {
+  image: string;
+  link: string;
+  releaseDate: string;
+}
+
+interface MostLikedMovie {
+  image: string;
+  link: string;
+}
+
 interface MovieContextType {
   currentMovie: Movie | null;
   setCurrentMovie: (movie: Movie | null) => void;
-  favorites: FavoriteMovie[];
-  addFavorite: (id: string, title: string, image: string) => void;
-  removeFavorite: (movieId: string) => void;
   fetchMovieDetails: (movieId: string) => Promise<void>;
   highlights: Highlight[];
   newMovies: NewMovie[];
+  comingSoon: ComingSoonMovie[];
+  mostLiked: MostLikedMovie[];
   fetchHighlights: () => Promise<void>;
   fetchNewMovies: () => Promise<void>;
+  fetchComingSoon: () => Promise<void>;
+  fetchMostLiked: () => Promise<void>;
   loading: boolean;
   error: string | null;
 }
@@ -60,9 +66,10 @@ const MovieContext = createContext<MovieContextType | undefined>(undefined);
 
 export function MovieContextProvider({ children }: { children: ReactNode }) {
   const [currentMovie, setCurrentMovie] = useState<Movie | null>(null);
-  const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [newMovies, setNewMovies] = useState<NewMovie[]>([]);
+  const [comingSoon, setComingSoon] = useState<ComingSoonMovie[]>([]);
+  const [mostLiked, setMostLiked] = useState<MostLikedMovie[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -103,18 +110,42 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const addFavorite = (id: string, title: string, image: string) => {
-    const favoriteMovie = {
-      _id: id,
-      title: title,
-      image: image,
-    };
-    setFavorites((prev) => [...prev, favoriteMovie]);
-  };
+  const fetchComingSoon = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(`${serverurl}/movies/comingsoon`);
+      const formattedComingSoon = response.data.data.map((movie: any) => ({
+        image: movie.image,
+        link: `/moviedetails/${movie._id}`,
+        releaseDate: movie.releaseDate,
+      }));
+      setComingSoon(formattedComingSoon);
+    } catch (error: any) {
+      console.error("Error fetching coming soon movies:", error);
+      setError("Failed to fetch coming soon movies");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  const removeFavorite = (movieId: string) => {
-    setFavorites((prev) => prev.filter((movie) => movie._id !== movieId));
-  };
+  const fetchMostLiked = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(`${serverurl}/movies/mostliked`);
+      const formattedMostLiked = response.data.data.map((movie: any) => ({
+        image: movie.image,
+        link: `/moviedetails/${movie._id}`,
+      }));
+      setMostLiked(formattedMostLiked);
+    } catch (error: any) {
+      console.error("Error fetching most liked movies:", error);
+      setError("Failed to fetch most liked movies");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const fetchMovieDetails = useCallback(async (movieId: string) => {
     setLoading(true);
@@ -135,14 +166,15 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
       value={{
         currentMovie,
         setCurrentMovie,
-        favorites,
-        addFavorite,
-        removeFavorite,
         fetchMovieDetails,
         highlights,
         newMovies,
+        comingSoon,
+        mostLiked,
         fetchHighlights,
         fetchNewMovies,
+        fetchComingSoon,
+        fetchMostLiked,
         loading,
         error,
       }}

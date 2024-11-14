@@ -8,6 +8,7 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 import { serverurl } from "../config";
+import { useAppContext } from "./AppContext";
 
 interface FavoriteMovie {
   _id: string;
@@ -32,8 +33,12 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
   const [favoriteLoading, setFavoriteLoading] = useState<boolean>(false);
   const [favoriteError, setFavoriteError] = useState<string | null>(null);
+  const { isAuthenticated } = useAppContext();
 
   const getFavorites = async () => {
+    if (!isAuthenticated) {
+      return;
+    }
     setFavoriteLoading(true);
     setFavoriteError(null);
     try {
@@ -49,13 +54,19 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
       );
     } catch (error: any) {
       setFavoriteError("Error fetching favorites.");
-      toast.error("Failed to fetch favorites.");
+      toast.error(
+        error.response?.data?.message || "Failed to fetch favorites."
+      );
     } finally {
       setFavoriteLoading(false);
     }
   };
 
   const addFavorite = async (movieId: string, title: string, image: string) => {
+    if (!isAuthenticated) {
+      toast.error("Please log in to manage your favorites");
+      return;
+    }
     setFavoriteLoading(true);
     setFavoriteError(null);
     try {
@@ -77,13 +88,19 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
       toast.success("Movie added to favorites!");
     } catch (error: any) {
       setFavoriteError("Error adding to favorites.");
-      toast.error("Failed to add to favorites.");
+      toast.error(
+        error.response?.data?.message || "Failed to add to favorites."
+      );
     } finally {
       setFavoriteLoading(false);
     }
   };
 
   const removeFavorite = async (movieId: string) => {
+    if (!isAuthenticated) {
+      toast.error("Please log in to manage your favorites");
+      return;
+    }
     setFavoriteLoading(true);
     setFavoriteError(null);
     try {
@@ -101,7 +118,9 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
       toast.success("Movie removed from favorites.");
     } catch (error: any) {
       setFavoriteError("Error removing from favorites.");
-      toast.error("Failed to remove from favorites.");
+      toast.error(
+        error.response?.data?.message || "Failed to remove from favorites."
+      );
     } finally {
       setFavoriteLoading(false);
     }
@@ -114,7 +133,7 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
     } else {
       getFavorites();
     }
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <FavoriteContext.Provider

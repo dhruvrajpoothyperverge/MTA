@@ -7,20 +7,31 @@ const HomePage = () => {
   const {
     highlights,
     newMovies,
+    comingSoon,
+    mostLiked,
     fetchNewMovies,
     fetchHighlights,
+    fetchComingSoon,
+    fetchMostLiked,
     loading,
     error,
   } = useMovieContext();
 
   useEffect(() => {
-    if (highlights.length === 0) {
-      fetchHighlights();
-    }
-    if (newMovies.length === 0) {
-      fetchNewMovies();
-    }
-  }, [highlights, newMovies, fetchHighlights, fetchNewMovies]);
+    if (highlights.length === 0) fetchHighlights();
+  }, []);
+
+  useEffect(() => {
+    if (newMovies.length === 0) fetchNewMovies();
+  }, []);
+
+  useEffect(() => {
+    if (comingSoon.length === 0) fetchComingSoon();
+  }, []);
+
+  useEffect(() => {
+    if (mostLiked.length === 0) fetchMostLiked();
+  }, []);
 
   return (
     <HomeLayout>
@@ -40,11 +51,11 @@ const HomePage = () => {
             </HeadingContainer>
 
             <HeadingContainer label="Coming Soon">
-              <Slider data={newMovies} />
+              <Slider data={comingSoon} />
             </HeadingContainer>
 
             <HeadingContainer label="Most Liked">
-              <Slider data={newMovies} />
+              <Slider data={mostLiked} />
             </HeadingContainer>
           </>
         )}
