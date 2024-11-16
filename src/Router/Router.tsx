@@ -15,10 +15,10 @@ import PrivateRoute from "./PrivateRoutes";
 const Router = () => {
   return (
     <Routes>
-      <Route path="/" element={<SignInSignUpPage />} />
+      <Route path="/" element={<HomePage />} />
+      <Route path="/signinsignup" element={<SignInSignUpPage />} />
       <Route path="/signin" element={<SignInPage />} />
       <Route path="/signup" element={<SignUpPage />} />
-      <Route path="/home" element={<HomePage />} />
       <Route path="/moviedetails/:id" element={<MovieDetailsPage />} />
       <Route
         path="/bookingdetails/:id"

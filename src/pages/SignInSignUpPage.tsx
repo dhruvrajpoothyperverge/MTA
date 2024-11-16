@@ -1,8 +1,12 @@
 import { BackgroundContainer, SignInSignUp } from "mta-components";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppContext";
 
 const SignInSignUpPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAppContext();
+
   const onSignIn = () => {
     navigate("/signin");
   };
@@ -10,6 +14,10 @@ const SignInSignUpPage = () => {
   const onSignUp = () => {
     navigate("/signup");
   };
+
+  useEffect(() => {
+    if (isAuthenticated) navigate("/");
+  }, []);
 
   return (
     <BackgroundContainer>

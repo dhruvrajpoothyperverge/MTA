@@ -22,7 +22,7 @@ const MovieDetailsPage = () => {
     if (id) fetchMovieDetails(id);
   }, [id, fetchMovieDetails]);
 
-  const handleBackClick = () => navigate("/home");
+  const handleBackClick = () => navigate("/");
 
   const handleHeartClick = () => {
     if (currentMovie) {

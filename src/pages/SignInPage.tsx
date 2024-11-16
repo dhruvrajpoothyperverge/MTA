@@ -8,7 +8,7 @@ const SignInPage = () => {
   const [password, setPassword] = useState<string>("");
   const { login, isAuthenticated } = useAppContext();
   const location = useLocation();
-  const redirectTo = location.state?.from?.pathname || "/home";
+  const redirectTo = location.state?.from?.pathname || "/";
 
   const inputArray = [
     {
@@ -34,7 +34,7 @@ const SignInPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isAuthenticated) navigate("/home");
+    if (isAuthenticated) navigate("/");
   }, []);
 
   return (

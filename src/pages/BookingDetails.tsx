@@ -36,7 +36,7 @@ const BookingDetails = () => {
   const navigate = useNavigate();
 
   const onClick = () => {
-    navigate("/home");
+    navigate("/");
     resetBooking();
     resetFoodBooking();
   };

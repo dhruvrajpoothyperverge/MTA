@@ -77,7 +77,7 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("access_token", token.accessToken);
       localStorage.setItem("user", JSON.stringify(userData));
       toast.success("Email verified successfully");
-      navigate("/home");
+      navigate("/");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Error verifying email");
     }
@@ -98,7 +98,7 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("access_token", token.accessToken);
       localStorage.setItem("user", JSON.stringify(userData));
       toast.success("Logged in successfully");
-      navigate(redirectTo || "/home");
+      navigate(redirectTo || "/");
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Error logging in");
     }
@@ -110,7 +110,7 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("user");
     localStorage.removeItem("favorites");
     toast.success("Logged out successfully");
-    navigate("/login");
+    navigate("/signinsignup");
   };
 
   if (authloading) {

@@ -9,13 +9,13 @@ const Step4 = () => {
   const { resetFoodBooking } = useFoodContext();
 
   const onGoHome = () => {
-    navigate("/home");
+    navigate("/");
     resetBooking();
     resetFoodBooking();
   };
 
   const onTryAgain = () => {
-    navigate("/home");
+    navigate("/");
     resetBooking();
     resetFoodBooking();
   };
