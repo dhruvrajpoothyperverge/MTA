@@ -3,13 +3,18 @@ import {
   ReactNode,
   useContext,
   useState,
-  useEffect,
   useCallback,
 } from "react";
+import { useAppContext } from "./AppContext";
+import axiosInstance from "../config/axiosInstance";
+import { SelectedFoodItems } from "./FoodContext";
 
-interface SelectedFoodItem {
-  label: string;
-  quantity: number;
+export interface BookingTicket {
+  sessionId: string;
+  selectedSeats: { row: number; col: number }[];
+  adults: number;
+  childs: number;
+  selectedFoodItems: { _id: string; quantity: number }[];
 }
 
 interface BookingSummaryData {
@@ -18,7 +23,7 @@ interface BookingSummaryData {
   child: number;
   session: string;
   seatNumbers: string[];
-  buffetProducts: SelectedFoodItem[];
+  buffetProducts: SelectedFoodItems[];
   buffetTotal: number;
   ticketTotal: number;
   theater: string;
@@ -32,12 +37,10 @@ interface BookedTicket extends BookingSummaryData {
 
 interface TicketContextType {
   bookedTickets: BookedTicket[];
-  bookTicket: (bookingData: BookingSummaryData) => void;
+  bookTicket: (bookingData: BookingTicket) => void;
   fetchBookedTickets: () => void;
   loading: boolean;
   error: string | null;
-  user: string;
-  setUser: (user: string) => void;
 }
 
 const TicketContext = createContext<TicketContextType | undefined>(undefined);
@@ -46,43 +49,30 @@ export function TicketContextProvider({ children }: { children: ReactNode }) {
   const [bookedTickets, setBookedTickets] = useState<BookedTicket[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState<string>("user1");
+  const { user } = useAppContext();
 
-  const fetchBookedTickets = useCallback(() => {
+  const fetchBookedTickets = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const storedTickets = localStorage.getItem(`bookedTickets-${user}`);
-      if (storedTickets) {
-        setBookedTickets(JSON.parse(storedTickets));
-      }
+      const response = await axiosInstance.get(`/booking/booked-tickets`);
+      setBookedTickets(response.data);
     } catch (error) {
+      console.error("Error fetching booked tickets:", error);
       setError("Failed to load booked tickets");
+    } finally {
+      setLoading(false);
     }
   }, [user]);
 
-  useEffect(() => {
-    fetchBookedTickets();
-  }, [fetchBookedTickets]);
-
-  const bookTicket = (bookingData: BookingSummaryData) => {
+  const bookTicket = async (bookingData: BookingTicket) => {
     setLoading(true);
-    setError(null);
-
-    const newBookedTicket: BookedTicket = {
-      ...bookingData,
-      _id: `${new Date().getTime()}`,
-      bookingDate: new Date().toISOString(),
-      user: user,
-    };
-
     try {
-      const updatedBookedTickets = [...bookedTickets, newBookedTicket];
-      localStorage.setItem(
-        `bookedTickets-${user}`,
-        JSON.stringify(updatedBookedTickets)
-      );
-      setBookedTickets(updatedBookedTickets);
+      const response = await axiosInstance.post("/booking", bookingData);
+      setBookedTickets((prev) => [...prev, response.data]);
     } catch (error) {
-      setError("Failed to book ticket");
+      console.error("Error booking the ticket:", error);
+      setError("Error booking the ticket");
     } finally {
       setLoading(false);
     }
@@ -96,8 +86,6 @@ export function TicketContextProvider({ children }: { children: ReactNode }) {
         fetchBookedTickets,
         loading,
         error,
-        user,
-        setUser,
       }}
     >
       {children}
@@ -107,9 +95,10 @@ export function TicketContextProvider({ children }: { children: ReactNode }) {
 
 export function useTicketContext() {
   const context = useContext(TicketContext);
-  if (!context)
+  if (!context) {
     throw new Error(
       "useTicketContext must be used within TicketContextProvider"
     );
+  }
   return context;
 }

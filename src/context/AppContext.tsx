@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { serverurl } from "../config";
 import Loading from "../pages/Loading";
+import axiosInstance from "../config/axiosInstance";
 
 interface User {
   _id: string;
@@ -34,11 +35,9 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
 
   const isAuthenticated = !!user;
 
-  const fetchUserDetails = async (token: string) => {
+  const fetchUserDetails = async () => {
     try {
-      const response = await axios.get(`${serverurl}/auth/user`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axiosInstance.get(`${serverurl}/auth/user`);
       setUser(response.data.user);
       localStorage.setItem("user", JSON.stringify(response.data.user));
     } catch (error) {
@@ -59,7 +58,7 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
         setUser(JSON.parse(cachedUser));
         setAuthLoading(false);
       } else {
-        fetchUserDetails(token);
+        fetchUserDetails();
       }
     } else {
       setAuthLoading(false);

@@ -19,3 +19,30 @@ export const getSeatLabel = (
 
   return `${rowLabel}${colNumber}`;
 };
+
+export const formatTime = (
+  startIsoString: string,
+  endIsoString: string
+): string => {
+  const startDate = new Date(startIsoString);
+  const endDate = new Date(endIsoString);
+
+  const formatSingleTime = (date: Date): string => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const formattedHour = hours % 12 || 12;
+    const formattedMinute = minutes < 10 ? `0${minutes}` : minutes;
+
+    return `${formattedHour}:${formattedMinute} ${ampm}`;
+  };
+
+  const day = startDate.getDate();
+  const month = startDate.toLocaleString("default", { month: "short" });
+
+  const startTime = formatSingleTime(startDate);
+  const endTime = formatSingleTime(endDate);
+
+  return `${day} ${month}, ${startTime} - ${endTime}`;
+};

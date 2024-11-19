@@ -7,7 +7,7 @@ import {
   RightArrow,
 } from "mta-components";
 import { useBookingContext } from "../../context/BookingContext";
-import { getSeatLabel } from "../../utils/utility";
+import { formatTime, getSeatLabel } from "../../utils/utility";
 import { useFoodContext } from "../../context/FoodContext";
 import { useEffect } from "react";
 import { useMovieContext } from "../../context/MovieContext";
@@ -53,9 +53,7 @@ const Step2 = (props: any) => {
       label: "ADULT",
       quantity: adults,
       maxAllowed: totalSeats - childs,
-      onIncrease: () => {
-        incrementAdults();
-      },
+      onIncrease: () => incrementAdults(),
       onDecrease: () => {
         if (adults > 0) decrementAdults();
       },
@@ -64,9 +62,7 @@ const Step2 = (props: any) => {
       label: "CHILD",
       quantity: childs,
       maxAllowed: totalSeats - adults,
-      onIncrease: () => {
-        incrementChild();
-      },
+      onIncrease: () => incrementChild(),
       onDecrease: () => {
         if (childs > 0) decrementChild();
       },
@@ -77,9 +73,11 @@ const Step2 = (props: any) => {
     movie: currentMovie?.title || "",
     adult: adults,
     child: childs,
-    session: selectedSession,
+    session: selectedSession
+      ? formatTime(selectedSession?.startTime, selectedSession?.endTime)
+      : "",
     seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
-    theater: selectedMovieTheater,
+    theater: selectedMovieTheater?.name || "",
     buffetProducts: selectedFoodItems,
     buffetTotal: getTotalAmount(),
     ticketTotal: ticketTotalAmount,
@@ -93,6 +91,10 @@ const Step2 = (props: any) => {
     <div>
       <div className="flex flex-col gap-6 px-5 pb-28">
         <SeatMatrixContainer
+          rowSize={selectedMovieTheater?.seatingLayout.rows}
+          colSize={selectedMovieTheater?.seatingLayout.cols}
+          invalidRow={selectedMovieTheater?.invalidRows}
+          invalidCol={selectedMovieTheater?.invalidCols}
           selectedSeats={selectedSeats}
           filledSeats={filledSeats}
           onSeatClick={handleSeatClick}

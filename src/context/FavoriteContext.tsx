@@ -5,10 +5,10 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import axios from "axios";
 import toast from "react-hot-toast";
 import { serverurl } from "../config";
 import { useAppContext } from "./AppContext";
+import axiosInstance from "../config/axiosInstance";
 
 interface FavoriteMovie {
   _id: string;
@@ -42,11 +42,7 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
     setFavoriteLoading(true);
     setFavoriteError(null);
     try {
-      const response = await axios.get(`${serverurl}/favorite`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      });
+      const response = await axiosInstance.get(`${serverurl}/favorite`);
       setFavorites(response.data.favorite.movies);
       localStorage.setItem(
         "favorites",
@@ -70,15 +66,7 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
     setFavoriteLoading(true);
     setFavoriteError(null);
     try {
-      await axios.post(
-        `${serverurl}/favorite`,
-        { movieId },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
-        }
-      );
+      await axiosInstance.post(`${serverurl}/favorite`, { movieId });
       const newFavorite = { _id: movieId, title, image };
       setFavorites((prev) => [...prev, newFavorite]);
       localStorage.setItem(
@@ -104,11 +92,8 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
     setFavoriteLoading(true);
     setFavoriteError(null);
     try {
-      await axios.delete(`${serverurl}/favorite`, {
+      await axiosInstance.delete(`${serverurl}/favorite`, {
         data: { movieId },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
       });
       setFavorites((prev) => prev.filter((movie) => movie._id !== movieId));
       localStorage.setItem(

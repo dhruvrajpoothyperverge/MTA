@@ -28,7 +28,7 @@ const Step1 = (props: any) => {
           text="Next"
           icon={<RightArrow />}
           onClick={() => moveToNext(1)}
-          disabled={selectedTheater == "" || selectedSession == ""}
+          disabled={selectedTheater === null || selectedSession === null}
         />
       </StickyBottomContainer>
     </div>

@@ -1,39 +1,17 @@
 import { QRcodeContainer, BookingSummary, Button } from "mta-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useBookingContext } from "../context/BookingContext";
-import { getSeatLabel } from "../utils/utility";
 import { useFoodContext } from "../context/FoodContext";
-import { useMovieContext } from "../context/MovieContext";
+import { useTicketContext } from "../context/TicketContext";
 
 const BookingDetails = () => {
-  // current selected movie details instead of ticket booked details
-
-  const { currentMovie } = useMovieContext();
   const { resetBooking } = useBookingContext();
-  const { getTotalAmount, selectedFoodItems, resetFoodBooking } =
-    useFoodContext();
-  const {
-    selectedSeats,
-    adults,
-    childs,
-    ticketTotalAmount,
-    selectedMovieTheater,
-    selectedSession,
-  } = useBookingContext();
-
-  const bookingData = {
-    movie: currentMovie?.title || "",
-    adult: adults,
-    child: childs,
-    session: selectedSession,
-    seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
-    theater: selectedMovieTheater,
-    buffetProducts: selectedFoodItems,
-    buffetTotal: getTotalAmount(),
-    ticketTotal: ticketTotalAmount,
-  };
-
+  const { bookedTickets } = useTicketContext();
+  const { resetFoodBooking } = useFoodContext();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+
+  const ticket = bookedTickets.find((ticket) => ticket._id === id);
 
   const onClick = () => {
     navigate("/");
@@ -42,10 +20,26 @@ const BookingDetails = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center min-h-screen gap-10 px-5">
-      <QRcodeContainer value="Booked" />
-      <BookingSummary data={bookingData} />
-      <Button text="Go to Home" variant="secondary" onClick={onClick} />
+    <div className="flex flex-col justify-center items-center min-h-screen gap-10 px-5 py-10">
+      {ticket ? (
+        <>
+          <div className="w-full max-w-xs">
+            <QRcodeContainer value={ticket._id} />
+          </div>
+          <BookingSummary data={ticket} />
+          <Button text="Go to Home" variant="secondary" onClick={onClick} />
+        </>
+      ) : (
+        <div className="flex flex-col justify-center items-center gap-4 text-center">
+          <h2 className="text-xl font-semibold text-red-500">
+            No ticket found
+          </h2>
+          <p className="text-gray-500 mb-4">
+            It seems like this booking ID does not exist.
+          </p>
+          <Button text="Go to Home" variant="secondary" onClick={onClick} />
+        </div>
+      )}
     </div>
   );
 };

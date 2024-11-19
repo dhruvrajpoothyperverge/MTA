@@ -1,9 +1,17 @@
 import { BookingSummary, HeadingContainer } from "mta-components";
 import HomeLayout from "../layout/HomeLayout";
 import { useTicketContext } from "../context/TicketContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const BookedTickets = () => {
-  const { bookedTickets, loading, error } = useTicketContext();
+  const navigate = useNavigate();
+  const { bookedTickets, loading, error, fetchBookedTickets } =
+    useTicketContext();
+
+  useEffect(() => {
+    fetchBookedTickets();
+  }, []);
 
   return (
     <HomeLayout>
@@ -16,7 +24,11 @@ const BookedTickets = () => {
         ) : (
           <div className="space-y-4">
             {bookedTickets.map((ticket, index) => (
-              <BookingSummary data={ticket} key={index} />
+              <BookingSummary
+                data={ticket}
+                key={index}
+                onClick={() => navigate(`/bookingdetails/${ticket._id}`)}
+              />
             ))}
           </div>
         )}

@@ -1,21 +1,17 @@
 import { PaymentOptionContainer, TotalAmount } from "mta-components";
 import { useFoodContext } from "../../context/FoodContext";
 import { useBookingContext } from "../../context/BookingContext";
-import { useTicketContext } from "../../context/TicketContext";
-import { getSeatLabel } from "../../utils/utility";
-import { useMovieContext } from "../../context/MovieContext";
+import { BookingTicket, useTicketContext } from "../../context/TicketContext";
 
 const Step3 = (props: any) => {
   const { moveToNext } = props;
 
-  const { currentMovie } = useMovieContext();
   const { getTotalAmount, selectedFoodItems } = useFoodContext();
   const {
     selectedSeats,
     adults,
     childs,
     ticketTotalAmount,
-    selectedMovieTheater,
     selectedSession,
     selectedPaymentOption,
     onPaymentSelection,
@@ -23,16 +19,12 @@ const Step3 = (props: any) => {
 
   const { bookTicket } = useTicketContext();
 
-  const bookingData = {
-    movie: currentMovie?.title || "",
-    adult: adults,
-    child: childs,
-    session: selectedSession,
-    seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
-    theater: selectedMovieTheater,
-    buffetProducts: selectedFoodItems,
-    buffetTotal: getTotalAmount(),
-    ticketTotal: ticketTotalAmount,
+  const bookingData: BookingTicket = {
+    sessionId: selectedSession?._id || "",
+    selectedSeats,
+    adults,
+    childs,
+    selectedFoodItems,
   };
 
   const paymentOptions = [

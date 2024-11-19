@@ -22,6 +22,7 @@ export interface Movie {
   }[];
   videoLink: string;
   videoThumbnail: string;
+  releaseDate: string;
 }
 
 interface Highlight {

@@ -11,6 +11,8 @@ import BookedTickets from "../pages/BookedTickets";
 import Favorites from "../pages/Favorites";
 import ProfilePage from "../pages/ProfilePage";
 import PrivateRoute from "./PrivateRoutes";
+import AvailableTheaters from "../pages/BuyTicket/AvailableTheaters";
+import AvailableSessions from "../pages/BuyTicket/AvailableSessions";
 
 const Router = () => {
   return (
@@ -43,6 +45,14 @@ const Router = () => {
       <Route
         path="/profile"
         element={<PrivateRoute element={<ProfilePage />} />}
+      />
+      <Route
+        path="/available-theaters/:movieid"
+        element={<PrivateRoute element={<AvailableTheaters />} />}
+      />
+      <Route
+        path="/available-sessions/:movieid/:id"
+        element={<PrivateRoute element={<AvailableSessions />} />}
       />
     </Routes>
   );

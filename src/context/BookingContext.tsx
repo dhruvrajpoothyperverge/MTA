@@ -2,20 +2,45 @@ import {
   createContext,
   ReactNode,
   useContext,
-  useEffect,
   useState,
+  useCallback,
+  useEffect,
 } from "react";
+import axios from "axios";
+import { serverurl } from "../config";
 
 interface Seat {
   row: number;
   col: number;
 }
 
+export interface Theater {
+  _id: string;
+  name: string;
+  location: string;
+  seatingLayout: {
+    rows: number;
+    cols: number;
+  };
+  invalidRows: number[];
+  invalidCols: number[];
+}
+
+export interface Session {
+  _id: string;
+  movie: string;
+  startTime: string;
+  endTime: string;
+  filledSeats: Seat[];
+}
+
 interface BookingContextType {
-  selectedMovieTheater: string;
-  selectedSession: string;
-  handleSelectMovieTheater: (theater: string) => void;
-  handleSelectSession: (session: string) => void;
+  selectedMovieTheater: Theater | null;
+  selectedSession: Session | null;
+  handleSelectMovieTheater: (theater: Theater) => void;
+  handleSelectSession: (session: Session) => void;
+  availableTheaters: Theater[];
+  availableSessions: Session[];
   selectedSeats: Seat[];
   filledSeats: Seat[];
   addSelectedSeat: (seat: Seat) => void;
@@ -37,54 +62,135 @@ interface BookingContextType {
   selectedPaymentOption: string | null;
   onPaymentSelection: (paymentOption: string) => void;
   resetBooking: () => void;
+  fetchFilledSeats: () => void;
+  fetchAvailableTheaters: (movieId: string) => void;
+  fetchAvailableSessions: (
+    movieId: string,
+    theaterId: string,
+    selectedDate: string
+  ) => void;
+  loading: boolean;
+  error: string | null;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
 export function BookingContextProvider({ children }: { children: ReactNode }) {
-  const [rowSize, setRowSize] = useState<number>(9);
-  const [colSize, setColSize] = useState<number>(12);
-  const [invalidRows, setInvalidRows] = useState<number[]>([4]);
-  const [invalidCols, setInvalidCols] = useState<number[]>([4]);
-  const [totalSeats, setTotalSeats] = useState<number>(0);
-  const [selectedMovieTheater, setSelectedMovieTheater] = useState<string>("");
-  const [selectedSession, setSelectedSession] = useState<string>("");
+  const [selectedMovieTheater, setSelectedMovieTheater] =
+    useState<Theater | null>(null);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
   const [filledSeats, setFilledSeats] = useState<Seat[]>([]);
+  const [totalSeats, setTotalSeats] = useState<number>(0);
   const [adults, setAdults] = useState<number>(0);
   const [childs, setChilds] = useState<number>(0);
   const [ticketTotalAmount, setTicketTotal] = useState<number>(0);
   const [selectedPaymentOption, setSelectedPaymentOption] = useState<
     string | null
   >(null);
+  const [availableTheaters, setAvailableTheaters] = useState<Theater[]>([]);
+  const [availableSessions, setAvailableSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const axiosInstance = axios.create({
+    baseURL: serverurl,
+  });
 
   useEffect(() => {
-    setRowSize(9);
-    setColSize(12);
-    setInvalidRows([4]);
-    setInvalidCols([4]);
+    if (selectedMovieTheater) {
+      const calculateTotalSeats = () => {
+        const validRows =
+          selectedMovieTheater?.seatingLayout?.rows -
+          selectedMovieTheater?.invalidRows.length;
+
+        const validCols =
+          selectedMovieTheater?.seatingLayout?.cols -
+          selectedMovieTheater?.invalidCols.length;
+
+        return validRows * validCols;
+      };
+
+      setTotalSeats(calculateTotalSeats());
+    }
+  }, [selectedMovieTheater]);
+
+  useEffect(() => {
+    if (selectedSession) {
+      setFilledSeats(selectedSession.filledSeats);
+    }
+  }, [selectedSession]);
+
+  // Fetch available theaters
+  const fetchAvailableTheaters = useCallback(async (movieId: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInstance.get(`/theaters/movie/${movieId}`);
+      setAvailableTheaters(response.data);
+    } catch (error: any) {
+      console.error("Error fetching theaters:", error);
+      setError("Failed to fetch available theaters");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  useEffect(() => {
-    const validRows = rowSize - invalidRows.length;
-    const validCols = colSize - invalidCols.length;
-    setTotalSeats(validRows * validCols);
-  }, [rowSize, colSize, invalidRows, invalidCols]);
+  // Fetch available sessions for the selected movie, theater, and date
+  const fetchAvailableSessions = useCallback(
+    async (movieId: string, theaterId: string, selectedDate: string) => {
+      if (!movieId || !theaterId || !selectedDate) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await axiosInstance.get(
+          `/sessions?movieId=${movieId}&theaterId=${theaterId}&selectedDate=${selectedDate}`
+        );
+        setAvailableSessions(response.data);
+      } catch (error: any) {
+        console.error("Error fetching sessions:", error);
+        setAvailableSessions([]);
+        setError("Failed to fetch available sessions");
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
-  const handleSelectMovieTheater = (theater: string) =>
+  // Fetch filled seats for the selected session
+  const fetchFilledSeats = useCallback(async () => {
+    if (!selectedSession) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInstance.get(
+        `/session/${selectedSession}/filled-seats`
+      );
+      setFilledSeats(response.data);
+    } catch (error: any) {
+      console.error("Error fetching filled seats:", error);
+      setError("Failed to fetch filled seats");
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedSession]);
+
+  const handleSelectMovieTheater = (theater: Theater) => {
     setSelectedMovieTheater(theater);
-  const handleSelectSession = (session: string) => setSelectedSession(session);
-
-  const calculateAvailableSeats = () => {
-    const filledCount = filledSeats.length;
-    return totalSeats - filledCount;
+    setSelectedSession(null);
   };
 
+  const handleSelectSession = (session: Session) => {
+    setSelectedSession(session);
+  };
+
+  const calculateAvailableSeats = () => totalSeats - filledSeats.length;
+
   const addSelectedSeat = (seat: Seat) => {
-    const availableSeats = calculateAvailableSeats();
     if (
       selectedSeats.length < adults + childs &&
-      selectedSeats.length < availableSeats
+      selectedSeats.length < calculateAvailableSeats()
     ) {
       setSelectedSeats((prev) => [...prev, seat]);
     }
@@ -97,38 +203,18 @@ export function BookingContextProvider({ children }: { children: ReactNode }) {
   };
 
   const incrementAdults = () => {
-    const availableSeats = calculateAvailableSeats();
-    if (adults + childs < availableSeats) {
+    if (adults + childs < calculateAvailableSeats())
       setAdults((prev) => prev + 1);
-    }
   };
 
-  const decrementAdults = () => {
-    setAdults((prev) => Math.max(prev - 1, 0));
-  };
+  const decrementAdults = () => setAdults((prev) => Math.max(prev - 1, 0));
 
   const incrementChild = () => {
-    const availableSeats = calculateAvailableSeats();
-    if (adults + childs < availableSeats) {
+    if (adults + childs < calculateAvailableSeats())
       setChilds((prev) => prev + 1);
-    }
   };
 
-  const decrementChild = () => {
-    setChilds((prev) => Math.max(prev - 1, 0));
-  };
-
-  const fetchFilledSeats = () => {
-    const seatsFromBackend = [
-      { row: 1, col: 2 },
-      { row: 2, col: 3 },
-    ];
-    setFilledSeats(seatsFromBackend);
-  };
-
-  useEffect(() => {
-    fetchFilledSeats();
-  }, []);
+  const decrementChild = () => setChilds((prev) => Math.max(prev - 1, 0));
 
   const updateTicketTotalAmount = (
     adults: number,
@@ -140,8 +226,8 @@ export function BookingContextProvider({ children }: { children: ReactNode }) {
   };
 
   const resetBooking = () => {
-    setSelectedMovieTheater("");
-    setSelectedSession("");
+    setSelectedMovieTheater(null);
+    setSelectedSession(null);
     setSelectedSeats([]);
     setAdults(0);
     setChilds(0);
@@ -160,6 +246,8 @@ export function BookingContextProvider({ children }: { children: ReactNode }) {
         selectedSession,
         handleSelectMovieTheater,
         handleSelectSession,
+        availableTheaters,
+        availableSessions,
         selectedSeats,
         filledSeats,
         addSelectedSeat,
@@ -176,6 +264,11 @@ export function BookingContextProvider({ children }: { children: ReactNode }) {
         selectedPaymentOption,
         onPaymentSelection,
         resetBooking,
+        fetchFilledSeats,
+        fetchAvailableTheaters,
+        fetchAvailableSessions,
+        loading,
+        error,
       }}
     >
       {children}

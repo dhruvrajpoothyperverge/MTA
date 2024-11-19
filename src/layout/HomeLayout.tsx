@@ -1,11 +1,11 @@
 import {
   Heart,
   Home,
-  Ticket,
   Navbar,
   ProfileIcon,
   Logo,
   NotificationIcon,
+  TicketIcon,
 } from "mta-components";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
@@ -14,7 +14,7 @@ const HomeLayout = ({ children }: any) => {
   const navItems = [
     { icon: <Heart />, label: "Favorites", url: "/favorites" },
     { icon: <Home />, label: "Home", url: "/" },
-    { icon: <Ticket />, label: "Ticket", url: "/bookedtickets" },
+    { icon: <TicketIcon />, label: "Ticket", url: "/bookedtickets" },
   ];
 
   const navigate = useNavigate();

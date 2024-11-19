@@ -11,15 +11,24 @@ import { useEffect } from "react";
 const BuyFood = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { foodItems, selectedFoodItems, updateQuantity, getTotalAmount } =
-    useFoodContext();
+  const {
+    foodItems,
+    selectedFoodItems,
+    updateQuantity,
+    getTotalAmount,
+    fetchFoodItems,
+  } = useFoodContext();
   const { fetchMovieDetails, currentMovie } = useMovieContext();
 
   useEffect(() => {
     if (id && !currentMovie) {
       fetchMovieDetails(id);
     }
-  }, [id, currentMovie, fetchMovieDetails]);
+  }, [id, currentMovie]);
+
+  useEffect(() => {
+    if (foodItems.length === 0) fetchFoodItems();
+  }, [foodItems, fetchFoodItems]);
 
   const handleAddToCart = () => {
     if (currentMovie) {
@@ -47,20 +56,20 @@ const BuyFood = () => {
           data={foodItems.map((item) => ({
             ...item,
             quantity:
-              selectedFoodItems.find((selected) => selected.label === item.label)
+              selectedFoodItems.find((selected) => selected._id === item._id)
                 ?.quantity ?? 0,
-            onIncrease: () =>
-              updateQuantity(
-                item.label,
-                (selectedFoodItems.find((selected) => selected.label === item.label)
-                  ?.quantity ?? 0) + 1
-              ),
-            onDecrease: () =>
-              updateQuantity(
-                item.label,
-                (selectedFoodItems.find((selected) => selected.label === item.label)
-                  ?.quantity ?? 0) - 1
-              ),
+            onIncrease: () => {
+              const currentQuantity =
+                selectedFoodItems.find((selected) => selected._id === item._id)
+                  ?.quantity ?? 0;
+              updateQuantity(item._id, currentQuantity + 1);
+            },
+            onDecrease: () => {
+              const currentQuantity =
+                selectedFoodItems.find((selected) => selected._id === item._id)
+                  ?.quantity ?? 0;
+              updateQuantity(item._id, currentQuantity - 1);
+            },
           }))}
         />
       </div>

@@ -8,16 +8,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useBookingContext } from "../../context/BookingContext";
 import { useFoodContext } from "../../context/FoodContext";
 import { useMovieContext } from "../../context/MovieContext";
+import { formatTime } from "../../utils/utility";
 
 const BuyTicket = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const {
-    selectedMovieTheater,
-    selectedSession,
-    handleSelectMovieTheater,
-    handleSelectSession,
-  } = useBookingContext();
+  const { selectedMovieTheater, selectedSession } = useBookingContext();
   const { selectedFoodItems } = useFoodContext();
   const { fetchMovieDetails, currentMovie } = useMovieContext();
 
@@ -41,22 +37,23 @@ const BuyTicket = () => {
 
   const selectDivData = [
     {
-      text: selectedMovieTheater || "Choose a movie theater *",
+      text: selectedMovieTheater?.name || "Choose a movie theater *",
       icon: <RightArrow />,
-      isSelected: selectedMovieTheater !== "",
+      isSelected: selectedMovieTheater !== null,
       onClick: () => {
-        if (selectedMovieTheater === "")
-          handleSelectMovieTheater("NY - Cinema Village");
-        else handleSelectMovieTheater("");
+        navigate(`/available-theaters/${currentMovie?._id}`);
       },
     },
     {
-      text: selectedSession || "Select session *",
+      text: selectedSession
+        ? formatTime(selectedSession?.startTime, selectedSession?.endTime)
+        : "Select session *",
       icon: <RightArrow />,
-      isSelected: selectedSession !== "",
+      isSelected: selectedSession !== null,
       onClick: () => {
-        if (selectedSession === "") handleSelectSession("3 Nov, 8 PM - 11 PM");
-        else handleSelectSession("");
+        navigate(
+          `/available-sessions/${currentMovie?._id}/${selectedMovieTheater?._id}`
+        );
       },
     },
     {
