@@ -107,7 +107,20 @@ export function AppContextProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem("access_token");
     localStorage.removeItem("user");
-    localStorage.removeItem("favorites");
+
+    if ("caches" in window) {
+      caches.keys().then((cacheNames) => {
+        cacheNames.forEach((cacheName) => {
+          if (
+            cacheName.includes("booking-api-cache") ||
+            cacheName.includes("favorite-api-cache")
+          ) {
+            caches.delete(cacheName);
+          }
+        });
+      });
+    }
+
     toast.success("Logged out successfully");
     navigate("/signinsignup");
   };

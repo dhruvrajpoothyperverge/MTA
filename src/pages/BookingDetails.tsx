@@ -3,13 +3,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useBookingContext } from "../context/BookingContext";
 import { useFoodContext } from "../context/FoodContext";
 import { useTicketContext } from "../context/TicketContext";
+import { useEffect } from "react";
 
 const BookingDetails = () => {
   const { resetBooking } = useBookingContext();
-  const { bookedTickets } = useTicketContext();
+  const { bookedTickets, fetchBookedTickets } = useTicketContext();
   const { resetFoodBooking } = useFoodContext();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    if (bookedTickets.length === 0) fetchBookedTickets();
+  }, []);
 
   const ticket = bookedTickets.find((ticket) => ticket._id === id);
 

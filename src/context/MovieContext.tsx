@@ -59,8 +59,16 @@ interface MovieContextType {
   fetchNewMovies: () => Promise<void>;
   fetchComingSoon: () => Promise<void>;
   fetchMostLiked: () => Promise<void>;
-  loading: boolean;
-  error: string | null;
+  loadingHighlights: boolean;
+  loadingNewMovies: boolean;
+  loadingComingSoon: boolean;
+  loadingMostLiked: boolean;
+  loadingMovieDetails: boolean;
+  errorHighlights: string | null;
+  errorNewMovies: string | null;
+  errorComingSoon: string | null;
+  errorMostLiked: string | null;
+  errorMovieDetails: string | null;
 }
 
 const MovieContext = createContext<MovieContextType | undefined>(undefined);
@@ -71,12 +79,22 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
   const [newMovies, setNewMovies] = useState<NewMovie[]>([]);
   const [comingSoon, setComingSoon] = useState<ComingSoonMovie[]>([]);
   const [mostLiked, setMostLiked] = useState<MostLikedMovie[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const [loadingHighlights, setLoadingHighlights] = useState<boolean>(false);
+  const [loadingNewMovies, setLoadingNewMovies] = useState<boolean>(false);
+  const [loadingComingSoon, setLoadingComingSoon] = useState<boolean>(false);
+  const [loadingMostLiked, setLoadingMostLiked] = useState<boolean>(false);
+  const [loadingMovieDetails, setLoadingMovieDetails] = useState<boolean>(false);
+
+  const [errorHighlights, setErrorHighlights] = useState<string | null>(null);
+  const [errorNewMovies, setErrorNewMovies] = useState<string | null>(null);
+  const [errorComingSoon, setErrorComingSoon] = useState<string | null>(null);
+  const [errorMostLiked, setErrorMostLiked] = useState<string | null>(null);
+  const [errorMovieDetails, setErrorMovieDetails] = useState<string | null>(null);
 
   const fetchHighlights = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setLoadingHighlights(true);
+    setErrorHighlights(null);
     try {
       const response = await axios.get(`${serverurl}/movies/highlights`);
       const formattedHighlights = response.data.data.map((movie: any) => ({
@@ -86,16 +104,15 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
       }));
       setHighlights(formattedHighlights);
     } catch (error: any) {
-      console.error("Error fetching highlights:", error);
-      setError("Failed to fetch highlights");
+      setErrorHighlights("Failed to fetch highlights");
     } finally {
-      setLoading(false);
+      setLoadingHighlights(false);
     }
   }, []);
 
   const fetchNewMovies = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setLoadingNewMovies(true);
+    setErrorNewMovies(null);
     try {
       const response = await axios.get(`${serverurl}/movies/newmovies`);
       const formattedNewMovies = response.data.data.map((movie: any) => ({
@@ -104,16 +121,15 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
       }));
       setNewMovies(formattedNewMovies);
     } catch (error: any) {
-      console.error("Error fetching new movies:", error);
-      setError("Failed to fetch new movies");
+      setErrorNewMovies("Failed to fetch new movies");
     } finally {
-      setLoading(false);
+      setLoadingNewMovies(false);
     }
   }, []);
 
   const fetchComingSoon = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setLoadingComingSoon(true);
+    setErrorComingSoon(null);
     try {
       const response = await axios.get(`${serverurl}/movies/comingsoon`);
       const formattedComingSoon = response.data.data.map((movie: any) => ({
@@ -123,16 +139,15 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
       }));
       setComingSoon(formattedComingSoon);
     } catch (error: any) {
-      console.error("Error fetching coming soon movies:", error);
-      setError("Failed to fetch coming soon movies");
+      setErrorComingSoon("Failed to fetch coming soon movies");
     } finally {
-      setLoading(false);
+      setLoadingComingSoon(false);
     }
   }, []);
 
   const fetchMostLiked = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setLoadingMostLiked(true);
+    setErrorMostLiked(null);
     try {
       const response = await axios.get(`${serverurl}/movies/mostliked`);
       const formattedMostLiked = response.data.data.map((movie: any) => ({
@@ -141,24 +156,22 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
       }));
       setMostLiked(formattedMostLiked);
     } catch (error: any) {
-      console.error("Error fetching most liked movies:", error);
-      setError("Failed to fetch most liked movies");
+      setErrorMostLiked("Failed to fetch most liked movies");
     } finally {
-      setLoading(false);
+      setLoadingMostLiked(false);
     }
   }, []);
 
   const fetchMovieDetails = useCallback(async (movieId: string) => {
-    setLoading(true);
-    setError(null);
+    setLoadingMovieDetails(true);
+    setErrorMovieDetails(null);
     try {
       const response = await axios(`${serverurl}/movies/movie/${movieId}`);
       setCurrentMovie(response.data.data);
     } catch (error: any) {
-      console.error("Error fetching movie details:", error);
-      setError("Failed to fetch movie details");
+      setErrorMovieDetails("Failed to fetch movie details");
     } finally {
-      setLoading(false);
+      setLoadingMovieDetails(false);
     }
   }, []);
 
@@ -176,8 +189,16 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
         fetchNewMovies,
         fetchComingSoon,
         fetchMostLiked,
-        loading,
-        error,
+        loadingHighlights,
+        loadingNewMovies,
+        loadingComingSoon,
+        loadingMostLiked,
+        loadingMovieDetails,
+        errorHighlights,
+        errorNewMovies,
+        errorComingSoon,
+        errorMostLiked,
+        errorMovieDetails,
       }}
     >
       {children}

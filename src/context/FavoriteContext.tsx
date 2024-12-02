@@ -44,10 +44,6 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
     try {
       const response = await axiosInstance.get(`${serverurl}/favorite`);
       setFavorites(response.data.favorite.movies);
-      localStorage.setItem(
-        "favorites",
-        JSON.stringify(response.data.favorite.movies)
-      );
     } catch (error: any) {
       setFavoriteError("Error fetching favorites.");
       toast.error(
@@ -69,10 +65,6 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
       await axiosInstance.post(`${serverurl}/favorite`, { movieId });
       const newFavorite = { _id: movieId, title, image };
       setFavorites((prev) => [...prev, newFavorite]);
-      localStorage.setItem(
-        "favorites",
-        JSON.stringify([...favorites, newFavorite])
-      );
       toast.success("Movie added to favorites!");
     } catch (error: any) {
       setFavoriteError("Error adding to favorites.");
@@ -96,10 +88,6 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
         data: { movieId },
       });
       setFavorites((prev) => prev.filter((movie) => movie._id !== movieId));
-      localStorage.setItem(
-        "favorites",
-        JSON.stringify(favorites.filter((movie) => movie._id !== movieId))
-      );
       toast.success("Movie removed from favorites.");
     } catch (error: any) {
       setFavoriteError("Error removing from favorites.");
@@ -112,10 +100,7 @@ export function FavoriteContextProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const storedFavorites = localStorage.getItem("favorites");
-    if (storedFavorites) {
-      setFavorites(JSON.parse(storedFavorites));
-    } else {
+    if (isAuthenticated) {
       getFavorites();
     }
   }, [isAuthenticated]);

@@ -69,7 +69,7 @@ export function TicketContextProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     try {
       const response = await axiosInstance.post("/booking", bookingData);
-      setBookedTickets((prev) => [...prev, response.data]);
+      setBookedTickets((prev) => [response.data, ...prev]);
     } catch (error) {
       console.error("Error booking the ticket:", error);
       setError("Error booking the ticket");

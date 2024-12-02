@@ -17,7 +17,12 @@ import { useFoodContext } from "../context/FoodContext";
 const MovieDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { fetchMovieDetails, currentMovie } = useMovieContext();
+  const {
+    fetchMovieDetails,
+    currentMovie,
+    loadingMovieDetails,
+    errorMovieDetails,
+  } = useMovieContext();
   const { favorites, addFavorite, removeFavorite } = useFavoriteContext();
   const { resetBooking } = useBookingContext();
   const { resetFoodBooking } = useFoodContext();
@@ -54,6 +59,14 @@ const MovieDetailsPage = () => {
   const isReleaseDateInFuture = currentMovie
     ? new Date(currentMovie.releaseDate) > new Date()
     : false;
+
+  if (loadingMovieDetails) {
+    return <p>Loading movie details...</p>;
+  }
+
+  if (errorMovieDetails) {
+    return <p>{`Error: ${errorMovieDetails}`}</p>;
+  }
 
   return (
     <div>

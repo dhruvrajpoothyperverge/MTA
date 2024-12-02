@@ -13,52 +13,74 @@ const HomePage = () => {
     fetchHighlights,
     fetchComingSoon,
     fetchMostLiked,
-    loading,
-    error,
+    loadingHighlights,
+    loadingNewMovies,
+    loadingComingSoon,
+    loadingMostLiked,
+    errorHighlights,
+    errorNewMovies,
+    errorComingSoon,
+    errorMostLiked,
   } = useMovieContext();
 
   useEffect(() => {
     if (highlights.length === 0) fetchHighlights();
-  }, []);
+  }, [highlights]);
 
   useEffect(() => {
     if (newMovies.length === 0) fetchNewMovies();
-  }, []);
+  }, [newMovies]);
 
   useEffect(() => {
     if (comingSoon.length === 0) fetchComingSoon();
-  }, []);
+  }, [comingSoon]);
 
   useEffect(() => {
     if (mostLiked.length === 0) fetchMostLiked();
-  }, []);
+  }, [mostLiked]);
 
   return (
     <HomeLayout>
       <div className="flex flex-col gap-4 px-5 pb-24">
-        {loading ? (
-          <p>loading</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : (
-          <>
-            <HeadingContainer label="Highlights">
-              <Carousel data={highlights} />
-            </HeadingContainer>
+        <HeadingContainer label="Highlights">
+          {loadingHighlights ? (
+            <p>Loading highlights...</p>
+          ) : errorHighlights ? (
+            <p>{errorHighlights}</p>
+          ) : (
+            <Carousel data={highlights} />
+          )}
+        </HeadingContainer>
 
-            <HeadingContainer label="New Movies">
-              <Slider data={newMovies} />
-            </HeadingContainer>
+        <HeadingContainer label="New Movies">
+          {loadingNewMovies ? (
+            <p>Loading new movies...</p>
+          ) : errorNewMovies ? (
+            <p>{errorNewMovies}</p>
+          ) : (
+            <Slider data={newMovies} />
+          )}
+        </HeadingContainer>
 
-            <HeadingContainer label="Coming Soon">
-              <Slider data={comingSoon} />
-            </HeadingContainer>
+        <HeadingContainer label="Coming Soon">
+          {loadingComingSoon ? (
+            <p>Loading coming soon movies...</p>
+          ) : errorComingSoon ? (
+            <p>{errorComingSoon}</p>
+          ) : (
+            <Slider data={comingSoon} />
+          )}
+        </HeadingContainer>
 
-            <HeadingContainer label="Most Liked">
-              <Slider data={mostLiked} />
-            </HeadingContainer>
-          </>
-        )}
+        <HeadingContainer label="Most Liked">
+          {loadingMostLiked ? (
+            <p>Loading most liked movies...</p>
+          ) : errorMostLiked ? (
+            <p>{errorMostLiked}</p>
+          ) : (
+            <Slider data={mostLiked} />
+          )}
+        </HeadingContainer>
       </div>
     </HomeLayout>
   );
