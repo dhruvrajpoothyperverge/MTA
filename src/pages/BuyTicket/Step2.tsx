@@ -76,7 +76,16 @@ const Step2 = (props: any) => {
     session: selectedSession
       ? formatTime(selectedSession?.startTime, selectedSession?.endTime)
       : "",
-    seatNumbers: selectedSeats.map((seat) => getSeatLabel(seat.row, seat.col)),
+    seatNumbers: selectedSeats.map((seat) =>
+      getSeatLabel(
+        seat.row,
+        seat.col,
+        selectedMovieTheater?.invalidRows,
+        selectedMovieTheater?.invalidCols,
+        selectedMovieTheater?.seatingLayout.rows,
+        selectedMovieTheater?.seatingLayout.cols
+      )
+    ),
     theater: selectedMovieTheater?.name || "",
     buffetProducts: selectedFoodItems,
     buffetTotal: getTotalAmount(),
