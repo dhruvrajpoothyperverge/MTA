@@ -1,8 +1,5 @@
 import {
   MovieInfoContainer,
-  Description,
-  HeadingContainer,
-  Slider,
   StickyBottomContainer,
   Button,
   RightArrow,
@@ -69,45 +66,31 @@ const MovieDetailsPage = () => {
   }
 
   return (
-    <div>
+    <div className="pb-24">
       {currentMovie ? (
-        <MovieInfoContainer
-          onBackClick={handleBackClick}
-          onHeartClick={handleHeartClick}
-          videoLink={currentMovie.videoLink}
-          videoThumbnail={currentMovie.videoThumbnail}
-          movieInfo={currentMovie}
-          isFavorite={isFavorite}
-        />
-      ) : (
-        <div>Movie details not found.</div>
-      )}
-
-      <div className="flex flex-col gap-4 px-5 pb-28">
-        <Description
-          data={currentMovie?.description || "No description available."}
-        />
-        <HeadingContainer label="Images in the movie">
-          {currentMovie?.imagesInTheMovie &&
-          currentMovie?.imagesInTheMovie.length > 0 ? (
-            <Slider data={currentMovie?.imagesInTheMovie || []} />
-          ) : (
-            <div>No images available for this movie.</div>
-          )}
-        </HeadingContainer>
-      </div>
-
-      <StickyBottomContainer>
-        {!isReleaseDateInFuture ? (
-          <Button
-            text="Buy Ticket Now"
-            icon={<RightArrow />}
-            onClick={handleBuyTicketNow}
+        <>
+          <MovieInfoContainer
+            onBackClick={handleBackClick}
+            onHeartClick={handleHeartClick}
+            movieInfo={currentMovie}
+            isFavorite={isFavorite}
           />
-        ) : (
-          <p className="text-center text-3xl font-bold">Coming Soon</p>
-        )}
-      </StickyBottomContainer>
+
+          <StickyBottomContainer>
+            {!isReleaseDateInFuture ? (
+              <Button
+                text="Buy Ticket Now"
+                icon={<RightArrow />}
+                onClick={handleBuyTicketNow}
+              />
+            ) : (
+              <p className="text-center text-3xl font-bold">Coming Soon</p>
+            )}
+          </StickyBottomContainer>
+        </>
+      ) : (
+        <div>No movie details found</div>
+      )}
     </div>
   );
 };

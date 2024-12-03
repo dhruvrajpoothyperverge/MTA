@@ -95,7 +95,7 @@ const Step2 = (props: any) => {
   useEffect(() => {
     updateTicketTotalAmount(adults, childs, 20, 10); // example price
   });
-
+  
   return (
     <div>
       <div className="flex flex-col gap-6 px-5 pb-28">

@@ -1,9 +1,15 @@
-import { createContext, ReactNode, useContext, useState, useCallback } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useCallback,
+} from "react";
 import axios from "axios";
 import { serverurl } from "../config";
 
 interface BuffetItem {
-  _id: string; 
+  _id: string;
   image: string;
   label: string;
   items: string[];
@@ -11,7 +17,7 @@ interface BuffetItem {
 }
 
 export interface SelectedFoodItems {
-  _id: string; 
+  _id: string;
   label: string;
   quantity: number;
 }
@@ -19,7 +25,7 @@ export interface SelectedFoodItems {
 interface FoodContextType {
   foodItems: BuffetItem[];
   selectedFoodItems: SelectedFoodItems[];
-  updateQuantity: (id: string, quantity: number) => void; 
+  updateQuantity: (id: string, quantity: number) => void;
   getTotalAmount: () => number;
   resetFoodBooking: () => void;
   fetchFoodItems: () => Promise<void>;
@@ -32,9 +38,9 @@ const FoodContext = createContext<FoodContextType | undefined>(undefined);
 
 export function FoodContextProvider({ children }: { children: ReactNode }) {
   const [foodItems, setFoodItems] = useState<BuffetItem[]>([]);
-  const [selectedFoodItems, setSelectedFoodItems] = useState<SelectedFoodItems[]>(
-    []
-  );
+  const [selectedFoodItems, setSelectedFoodItems] = useState<
+    SelectedFoodItems[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,7 +66,7 @@ export function FoodContextProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosInstance.get("/food/selected"); 
+      const response = await axiosInstance.get("/food/selected");
       setSelectedFoodItems(response.data);
     } catch (error: any) {
       console.error("Error fetching selected food:", error);
@@ -73,18 +79,23 @@ export function FoodContextProvider({ children }: { children: ReactNode }) {
   const updateQuantity = (id: string, quantity: number) => {
     setSelectedFoodItems((prevSelected) => {
       const itemIndex = prevSelected.findIndex((item) => item._id === id);
+
       if (itemIndex === -1) {
-        // If item is not found, add it
-        return [...prevSelected, { _id: id, label: "", quantity }];
+        const foodItem = foodItems.find((item) => item._id === id);
+        if (foodItem) {
+          return [
+            ...prevSelected,
+            { _id: id, label: foodItem.label, quantity },
+          ];
+        }
+        return prevSelected;
       } else {
-        // If item exists, update its quantity
         const updatedItems = [...prevSelected];
         updatedItems[itemIndex] = { ...updatedItems[itemIndex], quantity };
         return updatedItems;
       }
     });
   };
-  
 
   const getTotalAmount = () => {
     return selectedFoodItems.reduce((total, selectedItem) => {

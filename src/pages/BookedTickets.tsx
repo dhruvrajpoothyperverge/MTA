@@ -22,7 +22,7 @@ const BookedTickets = () => {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : bookedTickets.length === 0 ? (
-          <p>No booked tickets found.</p>
+          <p>No ticket found.</p>
         ) : (
           <div className="space-y-4">
             {bookedTickets.map((ticket, index) => (
