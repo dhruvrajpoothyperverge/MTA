@@ -1,4 +1,4 @@
-import { BookingSummary, HeadingContainer } from "mta-components";
+import { BookedTicketContainer, HeadingContainer } from "mta-components";
 import HomeLayout from "../layout/HomeLayout";
 import { useTicketContext } from "../context/TicketContext";
 import { useEffect } from "react";
@@ -13,27 +13,21 @@ const BookedTickets = () => {
     fetchBookedTickets();
   }, []);
 
+  const handleTicketClick = (ticketId: string) => {
+    navigate(`/bookingdetails/${ticketId}`);
+  };
+
   return (
     <HomeLayout>
       <div className="flex flex-col gap-4 px-5 pb-24">
-        <HeadingContainer label="Booked Tickets" />
-        {loading ? (
-          <p>Loading booked tickets...</p>
-        ) : error ? (
-          <p className="text-red-500">{error}</p>
-        ) : bookedTickets.length === 0 ? (
-          <p>No ticket found.</p>
-        ) : (
-          <div className="space-y-4">
-            {bookedTickets.map((ticket, index) => (
-              <BookingSummary
-                data={ticket}
-                key={index}
-                onClick={() => navigate(`/bookingdetails/${ticket._id}`)}
-              />
-            ))}
-          </div>
-        )}
+        <HeadingContainer label="Booked Tickets">
+          <BookedTicketContainer
+            loading={loading}
+            error={error}
+            bookedTickets={bookedTickets}
+            onTicketClick={handleTicketClick}
+          />
+        </HeadingContainer>
       </div>
     </HomeLayout>
   );

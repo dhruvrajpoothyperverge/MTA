@@ -3,10 +3,13 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import ToastProvider from "./ToastProvider.tsx";
+import { SkeletonTheme } from "react-loading-skeleton";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ToastProvider />
-    <App />
+    <SkeletonTheme baseColor="#3a3a3a" highlightColor="#505050">
+      <App />
+    </SkeletonTheme>
   </StrictMode>
 );

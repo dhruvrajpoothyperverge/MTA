@@ -26,7 +26,7 @@ const MovieDetailsPage = () => {
 
   useEffect(() => {
     if (id) fetchMovieDetails(id);
-  }, [id, fetchMovieDetails]);
+  }, [id]);
 
   const handleBackClick = () => navigate("/");
 
@@ -57,40 +57,32 @@ const MovieDetailsPage = () => {
     ? new Date(currentMovie.releaseDate) > new Date()
     : false;
 
-  if (loadingMovieDetails) {
-    return <p>Loading movie details...</p>;
-  }
-
-  if (errorMovieDetails) {
-    return <p>{`Error: ${errorMovieDetails}`}</p>;
-  }
-
   return (
     <div className="pb-24">
-      {currentMovie ? (
-        <>
-          <MovieInfoContainer
-            onBackClick={handleBackClick}
-            onHeartClick={handleHeartClick}
-            movieInfo={currentMovie}
-            isFavorite={isFavorite}
-          />
-
-          <StickyBottomContainer>
-            {!isReleaseDateInFuture ? (
-              <Button
-                text="Buy Ticket Now"
-                icon={<RightArrow />}
-                onClick={handleBuyTicketNow}
-              />
-            ) : (
-              <p className="text-center text-3xl font-bold">Coming Soon</p>
-            )}
-          </StickyBottomContainer>
-        </>
+      {errorMovieDetails ? (
+        <div className="text-center text-red-500">
+          <p>Error: {errorMovieDetails}</p>
+        </div>
       ) : (
-        <div>No movie details found</div>
+        <MovieInfoContainer
+          onBackClick={handleBackClick}
+          onHeartClick={handleHeartClick}
+          movieInfo={currentMovie}
+          isFavorite={isFavorite}
+        />
       )}
+      <StickyBottomContainer>
+        {!isReleaseDateInFuture ? (
+          <Button
+            text="Buy Ticket Now"
+            icon={<RightArrow />}
+            onClick={handleBuyTicketNow}
+            disabled={loadingMovieDetails}
+          />
+        ) : (
+          <p className="text-center text-3xl font-bold">Coming Soon</p>
+        )}
+      </StickyBottomContainer>
     </div>
   );
 };

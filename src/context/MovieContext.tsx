@@ -163,6 +163,7 @@ export function MovieContextProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const fetchMovieDetails = useCallback(async (movieId: string) => {
+    setCurrentMovie(null);
     setLoadingMovieDetails(true);
     setErrorMovieDetails(null);
     try {

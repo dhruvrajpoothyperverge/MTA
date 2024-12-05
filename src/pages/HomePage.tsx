@@ -25,61 +25,53 @@ const HomePage = () => {
 
   useEffect(() => {
     if (highlights.length === 0) fetchHighlights();
-  }, [highlights]);
+  }, []);
 
   useEffect(() => {
     if (newMovies.length === 0) fetchNewMovies();
-  }, [newMovies]);
+  }, []);
 
   useEffect(() => {
     if (comingSoon.length === 0) fetchComingSoon();
-  }, [comingSoon]);
+  }, []);
 
   useEffect(() => {
     if (mostLiked.length === 0) fetchMostLiked();
-  }, [mostLiked]);
+  }, []);
 
   return (
     <HomeLayout>
       <div className="flex flex-col gap-4 px-5 pb-24">
         <HeadingContainer label="Highlights">
-          {loadingHighlights ? (
-            <p>Loading highlights...</p>
-          ) : errorHighlights ? (
-            <p>{errorHighlights}</p>
-          ) : (
-            <Carousel data={highlights} />
-          )}
+          <Carousel
+            data={highlights}
+            isLoading={loadingHighlights}
+            error={errorHighlights}
+          />
         </HeadingContainer>
 
         <HeadingContainer label="New Movies">
-          {loadingNewMovies ? (
-            <p>Loading new movies...</p>
-          ) : errorNewMovies ? (
-            <p>{errorNewMovies}</p>
-          ) : (
-            <Slider data={newMovies} />
-          )}
+          <Slider
+            data={newMovies}
+            isLoading={loadingNewMovies}
+            error={errorNewMovies}
+          />
         </HeadingContainer>
 
         <HeadingContainer label="Coming Soon">
-          {loadingComingSoon ? (
-            <p>Loading coming soon movies...</p>
-          ) : errorComingSoon ? (
-            <p>{errorComingSoon}</p>
-          ) : (
-            <Slider data={comingSoon} />
-          )}
+          <Slider
+            data={comingSoon}
+            isLoading={loadingComingSoon}
+            error={errorComingSoon}
+          />
         </HeadingContainer>
 
         <HeadingContainer label="Most Liked">
-          {loadingMostLiked ? (
-            <p>Loading most liked movies...</p>
-          ) : errorMostLiked ? (
-            <p>{errorMostLiked}</p>
-          ) : (
-            <Slider data={mostLiked} />
-          )}
+          <Slider
+            data={mostLiked}
+            isLoading={loadingMostLiked}
+            error={errorMostLiked}
+          />
         </HeadingContainer>
       </div>
     </HomeLayout>
