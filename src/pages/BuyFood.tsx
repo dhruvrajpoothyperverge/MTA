@@ -17,8 +17,11 @@ const BuyFood = () => {
     updateQuantity,
     getTotalAmount,
     fetchFoodItems,
+    foodLoading,
+    foodError,
   } = useFoodContext();
-  const { fetchMovieDetails, currentMovie } = useMovieContext();
+  const { fetchMovieDetails, currentMovie, errorMovieDetails } =
+    useMovieContext();
 
   useEffect(() => {
     if (id && !currentMovie) {
@@ -41,6 +44,18 @@ const BuyFood = () => {
       navigate(`/buyticket/${currentMovie._id}`);
     }
   };
+
+  if (foodError || errorMovieDetails) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p className="text-red-500 text-lg">
+          {foodError && "Error loading food items. Please try again."}
+          {errorMovieDetails &&
+            " Error loading movie details. Please try again."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -71,12 +86,14 @@ const BuyFood = () => {
               updateQuantity(item._id, currentQuantity - 1);
             },
           }))}
+          loading={foodLoading}
         />
       </div>
 
       <AmountAndCartContainer
         totalAmount={getTotalAmount()}
         addToCart={handleAddToCart}
+        disabled={foodLoading}
       />
     </div>
   );

@@ -1,4 +1,3 @@
-// AvailableSessions.tsx
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMovieContext } from "../../context/MovieContext";
@@ -16,6 +15,7 @@ const AvailableSessions: React.FC = () => {
     availableSessions,
     fetchAvailableSessions,
     handleSelectSession,
+    loading,
   } = useBookingContext();
 
   const [selectedDate, setSelectedDate] = useState<string>(
@@ -64,7 +64,7 @@ const AvailableSessions: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-4 p-5">
+    <div className="flex flex-col gap-4 p-5 text-white">
       <Button
         variant="tertiary"
         icon={<LeftArrow />}
@@ -80,14 +80,17 @@ const AvailableSessions: React.FC = () => {
         onDateSelect={handleDateSelect}
       />
 
-      {selectedDate && availableSessions.length > 0 ? (
+      {selectedDate && (
         <SessionList
           selectedSession={selectedSession}
           availableSessions={availableSessions}
           onSessionSelect={handleSessionSelect}
+          loading={loading}
         />
-      ) : (
-        selectedDate && <p>No available sessions for this date.</p>
+      )}
+
+      {!loading && selectedDate && availableSessions.length === 0 && (
+        <p>No available sessions for this date.</p>
       )}
     </div>
   );

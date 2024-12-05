@@ -30,8 +30,10 @@ interface FoodContextType {
   resetFoodBooking: () => void;
   fetchFoodItems: () => Promise<void>;
   fetchSelectedFood: () => Promise<void>;
-  loading: boolean;
-  error: string | null;
+  foodLoading: boolean;
+  foodError: string | null;
+  selectedFoodLoading: boolean;
+  selectedFoodError: string | null;
 }
 
 const FoodContext = createContext<FoodContextType | undefined>(undefined);
@@ -41,38 +43,45 @@ export function FoodContextProvider({ children }: { children: ReactNode }) {
   const [selectedFoodItems, setSelectedFoodItems] = useState<
     SelectedFoodItems[]
   >([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const [foodLoading, setFoodLoading] = useState<boolean>(false);
+  const [foodError, setFoodError] = useState<string | null>(null);
+
+  const [selectedFoodLoading, setSelectedFoodLoading] =
+    useState<boolean>(false);
+  const [selectedFoodError, setSelectedFoodError] = useState<string | null>(
+    null
+  );
 
   const axiosInstance = axios.create({
     baseURL: serverurl,
   });
 
   const fetchFoodItems = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setFoodLoading(true);
+    setFoodError(null);
     try {
       const response = await axiosInstance.get("/food");
       setFoodItems(response.data);
     } catch (error: any) {
       console.error("Error fetching food items:", error);
-      setError("Failed to fetch food items");
+      setFoodError("Failed to fetch food items");
     } finally {
-      setLoading(false);
+      setFoodLoading(false);
     }
   }, []);
 
   const fetchSelectedFood = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    setSelectedFoodLoading(true);
+    setSelectedFoodError(null);
     try {
       const response = await axiosInstance.get("/food/selected");
       setSelectedFoodItems(response.data);
     } catch (error: any) {
       console.error("Error fetching selected food:", error);
-      setError("Failed to fetch selected food");
+      setSelectedFoodError("Failed to fetch selected food");
     } finally {
-      setLoading(false);
+      setSelectedFoodLoading(false);
     }
   }, []);
 
@@ -118,8 +127,10 @@ export function FoodContextProvider({ children }: { children: ReactNode }) {
         resetFoodBooking,
         fetchFoodItems,
         fetchSelectedFood,
-        loading,
-        error,
+        foodLoading,
+        foodError,
+        selectedFoodLoading,
+        selectedFoodError,
       }}
     >
       {children}

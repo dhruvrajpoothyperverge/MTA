@@ -13,6 +13,7 @@ const AvailableTheaters = () => {
     availableTheaters,
     fetchAvailableTheaters,
     handleSelectMovieTheater,
+    loading,
   } = useBookingContext();
 
   useEffect(() => {
@@ -45,6 +46,7 @@ const AvailableTheaters = () => {
         selectedMovieTheater={selectedMovieTheater}
         availableTheaters={availableTheaters}
         onTheaterSelect={handleTheaterSelect}
+        loading={loading}
       />
     </div>
   );
