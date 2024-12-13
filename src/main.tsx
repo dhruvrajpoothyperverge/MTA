@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import ToastProvider from "./ToastProvider.tsx";
-import { SkeletonTheme } from "react-loading-skeleton";
+import { SkeletonTheme } from "mta-components";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
