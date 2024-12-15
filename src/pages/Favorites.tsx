@@ -1,4 +1,4 @@
-import { FavoritesContainer, HeadingContainer } from "mta-components";
+import { FavoritesContainer, Heading } from "mta-components";
 import HomeLayout from "../layout/HomeLayout";
 import { useFavoriteContext } from "../context/FavoriteContext";
 
@@ -7,14 +7,13 @@ const Favorites = () => {
 
   return (
     <HomeLayout>
-      <div className="px-5 pb-24">
-        <HeadingContainer label="Favorites">
-          <FavoritesContainer
-            favorites={favorites}
-            loading={favoriteLoading}
-            error={favoriteError}
-          />
-        </HeadingContainer>
+      <div className="flex flex-col gap-2 px-5 pb-24">
+        <Heading label="Favorites" />
+        <FavoritesContainer
+          favorites={favorites}
+          loading={favoriteLoading}
+          error={favoriteError}
+        />
       </div>
     </HomeLayout>
   );

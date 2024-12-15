@@ -83,13 +83,9 @@ export default defineConfig({
     }),
   ],
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("react-router-dom")) {
-            return "react-router";
-          }
-        },
+    terserOptions: {
+      compress: {
+        drop_console: true,
       },
     },
   },

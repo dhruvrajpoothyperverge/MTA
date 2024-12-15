@@ -1,4 +1,4 @@
-import { BookedTicketContainer, HeadingContainer } from "mta-components";
+import { BookedTicketContainer, Heading } from "mta-components";
 import HomeLayout from "../layout/HomeLayout";
 import { useTicketContext } from "../context/TicketContext";
 import { useEffect } from "react";
@@ -19,15 +19,14 @@ const BookedTickets = () => {
 
   return (
     <HomeLayout>
-      <div className="flex flex-col gap-4 px-5 pb-24">
-        <HeadingContainer label="Booked Tickets">
-          <BookedTicketContainer
-            loading={loading}
-            error={error}
-            bookedTickets={bookedTickets}
-            onTicketClick={handleTicketClick}
-          />
-        </HeadingContainer>
+      <div className="flex flex-col gap-2 px-5 pb-24">
+        <Heading label="Booked Tickets" />
+        <BookedTicketContainer
+          loading={loading}
+          error={error}
+          bookedTickets={bookedTickets}
+          onTicketClick={handleTicketClick}
+        />
       </div>
     </HomeLayout>
   );

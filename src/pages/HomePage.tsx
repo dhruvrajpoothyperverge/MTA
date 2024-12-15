@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Carousel, HeadingContainer, Slider } from "mta-components";
+import { Carousel, Heading, Slider } from "mta-components";
 import HomeLayout from "../layout/HomeLayout";
 import { useMovieContext } from "../context/MovieContext";
 
@@ -42,37 +42,33 @@ const HomePage = () => {
   return (
     <HomeLayout>
       <div className="flex flex-col gap-4 px-5 pb-24">
-        <HeadingContainer label="Highlights">
-          <Carousel
-            data={highlights}
-            isLoading={loadingHighlights}
-            error={errorHighlights}
-          />
-        </HeadingContainer>
+        <Heading label="Highlights" />
+        <Carousel
+          data={highlights}
+          isLoading={loadingHighlights}
+          error={errorHighlights}
+        />
 
-        <HeadingContainer label="New Movies">
-          <Slider
-            data={newMovies}
-            isLoading={loadingNewMovies}
-            error={errorNewMovies}
-          />
-        </HeadingContainer>
+        <Heading label="New Movies" />
+        <Slider
+          data={newMovies}
+          isLoading={loadingNewMovies}
+          error={errorNewMovies}
+        />
 
-        <HeadingContainer label="Coming Soon">
-          <Slider
-            data={comingSoon}
-            isLoading={loadingComingSoon}
-            error={errorComingSoon}
-          />
-        </HeadingContainer>
+        <Heading label="Coming Soon" />
+        <Slider
+          data={comingSoon}
+          isLoading={loadingComingSoon}
+          error={errorComingSoon}
+        />
 
-        <HeadingContainer label="Most Liked">
-          <Slider
-            data={mostLiked}
-            isLoading={loadingMostLiked}
-            error={errorMostLiked}
-          />
-        </HeadingContainer>
+        <Heading label="Most Liked" />
+        <Slider
+          data={mostLiked}
+          isLoading={loadingMostLiked}
+          error={errorMostLiked}
+        />
       </div>
     </HomeLayout>
   );
