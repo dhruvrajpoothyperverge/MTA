@@ -30,19 +30,23 @@ const Step3 = (props: any) => {
   const paymentOptions = [
     {
       title: "Apple Pay",
-      image: "/assets/applepay.png",
+      image:
+        "https://res.cloudinary.com/dqofbcsua/image/upload/v1734418164/applepay_jmclce.webp",
     },
     {
       title: "Master Card",
-      image: "/assets/mastercard.png",
+      image:
+        "https://res.cloudinary.com/dqofbcsua/image/upload/v1734418165/mastercard_rs8s4i.webp",
     },
     {
       title: "PayPal",
-      image: "/assets/paypal.png",
+      image:
+        "https://res.cloudinary.com/dqofbcsua/image/upload/v1734418165/paypal_vtsvsl.webp",
     },
     {
       title: "Google Pay",
-      image: "/assets/googlepay.png",
+      image:
+        "https://res.cloudinary.com/dqofbcsua/image/upload/v1734418165/googlepay_aaibaa.webp",
     },
   ];
 

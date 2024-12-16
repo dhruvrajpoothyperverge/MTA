@@ -10,6 +10,7 @@ import {
 } from "mta-components";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../context/AppContext";
+import { subscribeToPushNotifications } from "../utils/pushNotification";
 
 const HomeLayout = ({ children }: any) => {
   const navigate = useNavigate();
@@ -41,9 +42,13 @@ const HomeLayout = ({ children }: any) => {
       <div className="flex justify-between items-center p-6 sticky top-0 bg-[#141414] z-50">
         <ProfileIcon
           profilePic={
-            user ? "/assets/kungfupanda.png" : "/assets/profilepic.png"
+            user
+              ? "https://res.cloudinary.com/dqofbcsua/image/upload/v1734418165/kungfupanda_jk4c76.webp"
+              : "https://res.cloudinary.com/dqofbcsua/image/upload/v1734418164/profilepic_yivk7z.webp"
           }
-          fallback={"/assets/profilepic.png"}
+          fallback={
+            "https://res.cloudinary.com/dqofbcsua/image/upload/v1734418164/profilepic_yivk7z.webp"
+          }
           onClick={onProfileClick}
         />
 
@@ -52,6 +57,7 @@ const HomeLayout = ({ children }: any) => {
         <Notification
           notifications={notifications}
           onClear={clearNotification}
+          onSubscribe={subscribeToPushNotifications}
         />
       </div>
 

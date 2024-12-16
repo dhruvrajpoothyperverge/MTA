@@ -24,19 +24,10 @@ const HomePage = () => {
   } = useMovieContext();
 
   useEffect(() => {
-    if (highlights.length === 0) fetchHighlights();
-  }, []);
-
-  useEffect(() => {
-    if (newMovies.length === 0) fetchNewMovies();
-  }, []);
-
-  useEffect(() => {
-    if (comingSoon.length === 0) fetchComingSoon();
-  }, []);
-
-  useEffect(() => {
-    if (mostLiked.length === 0) fetchMostLiked();
+    fetchComingSoon();
+    fetchHighlights();
+    fetchMostLiked();
+    fetchNewMovies();
   }, []);
 
   return (

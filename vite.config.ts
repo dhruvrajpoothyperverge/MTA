@@ -7,44 +7,9 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith("/movies"),
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "movies-api-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
-              },
-            },
-          },
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith("/booking"),
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "booking-api-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
-              },
-            },
-          },
-          {
-            urlPattern: ({ url }) => url.pathname.startsWith("/favorite"),
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "favorite-api-cache",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7,
-              },
-            },
-          },
-        ],
-      },
+      strategies: "injectManifest",
+      srcDir: "src",
+      filename: "custom-sw.js",
       manifest: {
         name: "Movie Ticket App",
         short_name: "MTA",
