@@ -48,6 +48,12 @@ export default defineConfig({
     }),
   ],
   build: {
+    cssCodeSplit: false,
+    sourcemap: false,
+    minify: "terser",
+    rollupOptions: {
+      treeshake: true,
+    },
     terserOptions: {
       compress: {
         drop_console: true,
