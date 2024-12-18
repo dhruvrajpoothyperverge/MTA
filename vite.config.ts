@@ -7,9 +7,51 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      strategies: "injectManifest",
-      srcDir: "src",
-      filename: "custom-sw.js",
+      // strategies: "injectManifest",
+      // srcDir: "src",
+      // filename: "custom-sw.js",
+      // injectManifest: {
+      //   globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+      // },
+      workbox: {
+        skipWaiting: true,
+        globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }: any) => url.pathname.startsWith("/movies"),
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "movies-api-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+            },
+          },
+          {
+            urlPattern: ({ url }: any) => url.pathname.startsWith("/booking"),
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "booking-api-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+            },
+          },
+          {
+            urlPattern: ({ url }: any) => url.pathname.startsWith("/favorite"),
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "favorite-api-cache",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 7,
+              },
+            },
+          },
+        ],
+      },
       manifest: {
         name: "Movie Ticket App",
         short_name: "MTA",
