@@ -77,7 +77,7 @@ const MovieDetailsPage = () => {
             text="Buy Ticket Now"
             icon={<RightArrow />}
             onClick={handleBuyTicketNow}
-            disabled={loadingMovieDetails}
+            disabled={loadingMovieDetails || !currentMovie}
           />
         ) : (
           <p className="text-center text-3xl font-bold">Coming Soon</p>
