@@ -19,7 +19,7 @@ const AvailableSessions: React.FC = () => {
   } = useBookingContext();
 
   const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
+    new Date().toLocaleDateString("en-CA")
   );
 
   useEffect(() => {
@@ -56,7 +56,7 @@ const AvailableSessions: React.FC = () => {
     for (let i = 0; i < 7; i++) {
       const newDate = new Date(currentDate);
       newDate.setDate(currentDate.getDate() + i);
-      const formattedDate = newDate.toISOString().split("T")[0];
+      const formattedDate = newDate.toLocaleDateString("en-CA");
       dateArray.push(formattedDate);
     }
 

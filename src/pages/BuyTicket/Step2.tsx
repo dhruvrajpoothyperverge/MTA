@@ -11,6 +11,9 @@ import { formatTime, getSeatLabel } from "../../utils/utility";
 import { useFoodContext } from "../../context/FoodContext";
 import { useEffect } from "react";
 import { useMovieContext } from "../../context/MovieContext";
+import axios from "axios";
+import { serverurl } from "../../config";
+import toast from "react-hot-toast";
 
 const Step2 = (props: any) => {
   const { moveToNext } = props;
@@ -31,15 +34,17 @@ const Step2 = (props: any) => {
     incrementChild,
     decrementChild,
     filledSeats,
+    lockedSeats,
+    updateLockedSeats,
     ticketTotalAmount,
     updateTicketTotalAmount,
     totalSeats,
   } = useBookingContext();
 
-  const handleSeatClick = (
+  const handleSeatClick = async (
     rowIndex: number,
     seatIndex: number,
-    status: "vacant" | "selected" | "filled" | "invalid"
+    status: "vacant" | "selected" | "filled" | "invalid" | "locked"
   ) => {
     if (status === "vacant") {
       removeSelectedSeat({ row: rowIndex, col: seatIndex });
@@ -93,9 +98,27 @@ const Step2 = (props: any) => {
   };
 
   useEffect(() => {
-    updateTicketTotalAmount(adults, childs, 20, 10); // example price
-  });
-  
+    updateTicketTotalAmount(adults, childs, 20, 10);
+  }, [adults, childs]);
+
+  const handlePaymentOptionsClick = async () => {
+    try {
+      const response = await axios.post(
+        `${serverurl}/sessions/${selectedSession?._id}/lock-seats`,
+        {
+          selectedSeats,
+        }
+      );
+      if (response.status === 200) {
+        moveToNext(2);
+      }
+    } catch (error: any) {
+      selectedSeats.forEach((seat) => removeSelectedSeat(seat));
+      updateLockedSeats(error?.response?.data?.lockedSeats);
+      toast.error("Failed to lock seats. Please select seats again.");
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-6 px-5 pb-28">
@@ -106,6 +129,7 @@ const Step2 = (props: any) => {
           invalidCol={selectedMovieTheater?.invalidCols}
           selectedSeats={selectedSeats}
           filledSeats={filledSeats}
+          lockedSeats={lockedSeats}
           onSeatClick={handleSeatClick}
         />
 
@@ -122,7 +146,7 @@ const Step2 = (props: any) => {
           disabled={
             adults + childs === 0 || selectedSeats.length !== adults + childs
           }
-          onClick={() => moveToNext(2)}
+          onClick={handlePaymentOptionsClick}
         />
       </StickyBottomContainer>
     </div>
